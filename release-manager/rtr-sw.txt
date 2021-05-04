@@ -1,0 +1,125 @@
+hostname rare
+buggy
+!
+logging buffered debug 10240
+logging file debug /var/log/freertr.log
+logging rotate 655360000 /var/log/freertr.old
+!
+!
+crypto rsakey rsa generate 2048
+!
+crypto dsakey dsa generate 1024
+!
+crypto ecdsakey ecdsa generate 256
+!
+!
+scheduler errors
+ time 600000
+ delay 30000
+ command clear errors freerror@nop.hu
+ start
+ exit
+!
+aaa userlist usr
+ no log-error
+ username rare
+ username rare password rare 
+ exit
+!
+prefix-list all4
+ sequence 10 permit 0.0.0.0/0 ge 0 le 0
+ exit
+!
+prefix-list all6
+ sequence 10 permit ::/0 ge 0 le 0
+ exit
+!
+vrf definition p4
+ description P4 VRF _NEVER_EVER_ CONFIGURE IT 
+ exit
+!
+vrf definition oob
+ exit
+!
+vrf definition lin
+ exit
+!
+interface ethernet0
+ description CPU_PORT _NEVER_EVER_ CONFIGURE IT 
+ no shutdown
+ no log-link-change
+ exit
+!
+interface ethernet1
+ description out of band management port
+ vrf forwarding oob
+ ipv4 address dynamic dynamic
+ ipv4 gateway-prefix all4
+ ipv4 dhcp-client enable
+ ipv4 dhcp-client early
+ ipv6 address dynamic dynamic
+ ipv6 gateway-prefix all6
+ ipv6 slaac
+ ipv6 prefix-suppress
+ no shutdown
+ no log-link-change
+ exit
+!
+interface ethernet2
+ description linux tuntap management interface
+ vrf forwarding lin
+ ipv4 address 10.255.255.254 255.255.255.0
+ no shutdown
+ no log-link-change
+ exit
+!
+server telnet oob
+ security authentication usr
+ security rsakey rsa
+ security dsakey dsa
+ security ecdsakey ecdsa
+ exec logging
+ login logging
+ second-port 22
+ login authentication usr
+ vrf oob
+ exit
+!
+server telnet p4
+ security protocol telnet
+ exec logging
+ login logging
+ vrf p4
+ exit
+!
+server p4lang p4
+ interconnect ethernet0
+ vrf p4
+ exit
+!
+proxy-profile oob
+ vrf oob
+ exit
+!
+client proxy oob
+client name-server 1.1.1.1
+client time-server europe.pool.ntp.org
+client time-zone CET
+!
+alias test tna-port-detect command attach shell1 @NIX_PROFILE@/bin/sh_tna_ports.sh
+alias test tna-port-detect cmd2nd test hwpop uclipm /etc/freertr/tna_ports.cfg server p4lang p4 ports ready auto normal apply add
+alias test tna-port-detect description Detect TOFINO ports
+alias test tna-port-remove command attach shell1 @NIX_PROFILE@/bin/sh_tna_ports.sh
+alias test tna-port-remove cmd2nd test hwpop uclipm /etc/freertr/tna_ports.cfg server p4lang p4 ports ready auto normal apply del
+alias test tna-port-remove description Remove NON RDY TOFINO ports
+alias test tna-linux-temp command attach shell2 acpi -V
+alias test tna-linux-temp description display main cpu temperature
+alias test tna-linux-access command ssh 10.255.255.1 /vrf lin /user sysadmin /pass sysadmin
+alias test tna-linux-access description access linux console
+alias test tna-asic-temp command attach shell1 @NIX_PROFILE@/bin/sh_tna_temp.sh
+alias test tna-asic-temp cmd2nd flash type /etc/freertr/tna_temp.cfg
+alias test tna-asic-temp description display forwarding asic cpu temperature
+!
+do write
+!
+end

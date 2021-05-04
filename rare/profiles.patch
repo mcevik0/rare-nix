@@ -1,0 +1,137 @@
+diff --git a/p4src/include/cst_table_size.p4 b/p4src/include/cst_table_size.p4
+index db02822..fc13ef7 100644
+--- a/p4src/include/cst_table_size.p4
++++ b/p4src/include/cst_table_size.p4
+@@ -17,6 +17,125 @@
+ #ifndef _TABLE_SIZE_P4_
+ #define _TABLE_SIZE_P4_
+ 
++#ifdef PROFILE_BIER
++
++#define HAVE_MPLS
++#define HAVE_BIER
++#define HAVE_MCAST
++
++#define IPV4_LPM_TABLE_SIZE                    2048
++#define IPV6_LPM_TABLE_SIZE                    1024
++#define IPV4_MCAST_TABLE_SIZE                  512
++#define IPV6_MCAST_TABLE_SIZE                  512
++#define IPV4_HOST_TABLE_SIZE                   512
++#define IPV6_HOST_TABLE_SIZE                   512
++#define MPLS_TABLE_SIZE                        2048
++#define PORT_TABLE_SIZE                        512
++#define MAC_TABLE_SIZE                         512
++#define BUNDLE_TABLE_SIZE                      512
++#define VLAN_TABLE_SIZE                        512
++#define NEXTHOP_TABLE_SIZE                     1024
++
++#elif defined PROFILE_GRE
++
++#define HAVE_MPLS
++#define HAVE_TUN
++#define HAVE_GRE
++
++#define IPV4_LPM_TABLE_SIZE                    2048
++#define IPV6_LPM_TABLE_SIZE                    1024
++#define IPV4_HOST_TABLE_SIZE                   512
++#define IPV6_HOST_TABLE_SIZE                   512
++#define MPLS_TABLE_SIZE                        2048
++#define PORT_TABLE_SIZE                        512
++#define BUNDLE_TABLE_SIZE                      512
++#define VLAN_TABLE_SIZE                        512
++#define NEXTHOP_TABLE_SIZE                     1024
++#define IPV4_TUNNEL_TABLE_SIZE                 512
++#define IPV6_TUNNEL_TABLE_SIZE                 512
++
++#elif defined PROFILE_L2TP
++
++#define HAVE_MPLS
++#define HAVE_TUN
++#define HAVE_L2TP
++
++#define IPV4_LPM_TABLE_SIZE                    2048
++#define IPV6_LPM_TABLE_SIZE                    1024
++#define IPV4_HOST_TABLE_SIZE                   512
++#define IPV6_HOST_TABLE_SIZE                   512
++#define MPLS_TABLE_SIZE                        2048
++#define PORT_TABLE_SIZE                        512
++#define BUNDLE_TABLE_SIZE                      512
++#define VLAN_TABLE_SIZE                        512
++#define NEXTHOP_TABLE_SIZE                     1024
++#define IPV4_TUNNEL_TABLE_SIZE                 512
++#define IPV6_TUNNEL_TABLE_SIZE                 512
++
++#elif defined PROFILE_MLDP
++
++#define HAVE_MPLS
++////#define HAVE_BRIDGE
++#define HAVE_DUPLAB
++#define HAVE_MCAST
++
++#define IPV4_LPM_TABLE_SIZE                    2048
++#define IPV6_LPM_TABLE_SIZE                    1024
++#define IPV4_MCAST_TABLE_SIZE                  512
++#define IPV6_MCAST_TABLE_SIZE                  512
++#define IPV4_HOST_TABLE_SIZE                   512
++#define IPV6_HOST_TABLE_SIZE                   512
++#define MPLS_TABLE_SIZE                        2048
++#define PORT_TABLE_SIZE                        512
++#define MAC_TABLE_SIZE                         512
++#define BUNDLE_TABLE_SIZE                      512
++#define VLAN_TABLE_SIZE                        512
++#define NEXTHOP_TABLE_SIZE                     1024
++
++#elif defined PROFILE_MPLS
++
++#define HAVE_MPLS
++
++#define IPV4_LPM_TABLE_SIZE                    2048
++#define IPV6_LPM_TABLE_SIZE                    1024
++#define IPV4_HOST_TABLE_SIZE                   512
++#define IPV6_HOST_TABLE_SIZE                   512
++#define MPLS_TABLE_SIZE                        2048
++#define PORT_TABLE_SIZE                        512
++#define MAC_TABLE_SIZE                         512
++#define BUNDLE_TABLE_SIZE                      512
++#define VLAN_TABLE_SIZE                        512
++#define NEXTHOP_TABLE_SIZE                     1024
++
++#elif defined PROFILE_PPPOE
++
++#define HAVE_MPLS
++#define HAVE_PPPOE
++
++#define IPV4_LPM_TABLE_SIZE                    2048
++#define IPV6_LPM_TABLE_SIZE                    1024
++#define IPV4_HOST_TABLE_SIZE                   512
++#define IPV6_HOST_TABLE_SIZE                   512
++#define MPLS_TABLE_SIZE                        2048
++#define PORT_TABLE_SIZE                        512
++#define BUNDLE_TABLE_SIZE                      512
++#define VLAN_TABLE_SIZE                        512
++#define NEXTHOP_TABLE_SIZE                     1024
++#define PPPOE_TABLE_SIZE                       1024
++
++#elif defined PROFILE_RAWIP
++
++#define IPV4_LPM_TABLE_SIZE                    2048
++#define IPV6_LPM_TABLE_SIZE                    1024
++#define IPV4_HOST_TABLE_SIZE                   512
++#define IPV6_HOST_TABLE_SIZE                   512
++#define PORT_TABLE_SIZE                        512
++#define BUNDLE_TABLE_SIZE                      512
++#define VLAN_TABLE_SIZE                        512
++#define NEXTHOP_TABLE_SIZE                     1024
++
++#else
++
+ /*
+ on routing only profile we can have this
+ #define IPV4_LPM_TABLE_SIZE                    34816
+@@ -67,4 +186,6 @@ on routing only profile we can have this
+ #define IPV4_FLOWSPEC_TABLE_SIZE               512
+ #define IPV6_FLOWSPEC_TABLE_SIZE               512
+ 
++#endif /* default profile */
++
+ #endif // _TABLE_SIZE_P4_
