@@ -220,13 +220,13 @@ deactivate () {
 }
 
 list_installed () {
-    echo "Generation Current Release Git Tag                  KernelID       Kernel Release            Install date"
-    echo "-------------------------------------------------------------------------------------------------------------------------------"
+    echo "Generation Current Release Git Tag                  KernelID       Kernel Release            Platform                   Install date"
+    echo "-----------------------------------------------------------------------------------------------------------------------------------------------------------"
     for gen in $(printf '%s\n' "${!gens[@]}" | sort -n); do
-        read version gitTag kernelID kernelRelease < <(echo ${gens[$gen]} | tr ':' ' ')
+        read version gitTag kernelID kernelRelease platform < <(echo ${gens[$gen]} | tr ':' ' ')
         is_current=' '
         [ $gen -eq $current_gen ] && is_current='*'
-        printf "%10d $is_current       %-7s %-24s %-14s %-25s %s\n" $gen $version $gitTag $kernelID $kernelRelease "${install_dates[$gen]}"
+        printf "%10d $is_current       %-7s %-24s %-14s %-25s %-26s %s\n" $gen $version $gitTag $kernelID $kernelRelease $platform "${install_dates[$gen]}"
     done
 }
 

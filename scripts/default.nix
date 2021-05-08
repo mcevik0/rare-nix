@@ -1,4 +1,4 @@
-{ bf-sde, moduleWrappers, runCommand, lib, makeWrapper,
+{ runtimeEnv, moduleWrappers, runCommand, lib, makeWrapper,
   buildEnv, coreutils, utillinux, inetutils }:
 
 let
@@ -8,7 +8,7 @@ let
       --subst-var-by BFSH_SCRIPTS $out/share/bfshell
     chmod a+x $out/bin/${name}.sh
     wrapProgram $out/bin/${name}.sh \
-      --set PATH "${lib.strings.makeBinPath [ bf-sde ]}"
+      --set PATH "${lib.strings.makeBinPath [ runtimeEnv ]}"
   '';
   scripts = [ "sh_tna_ports" "sh_tna_temp" ];
   wrappersEnv = buildEnv {

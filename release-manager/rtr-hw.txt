@@ -1,4 +1,4 @@
-hwid wedge100bf32x 
+hwid @HWID@
 port 22000 64000
 tcp2vrf 2323 p4 23
 tcp2vrf 2001 p4 22
@@ -10,4 +10,4 @@ proc cpuport @NIX_PROFILE@/bin/if-wrapper.sh bf_pci0 @NIX_PROFILE@/bin/pcapInt.b
 proc mgmteth @NIX_PROFILE@/bin/pcapInt.bin enp2s0 20004 127.0.0.1 20003 127.0.0.1
 proc linport @NIX_PROFILE@/bin/tapInt.bin tapnet 20006 127.0.0.1 20005 127.0.0.1 10.255.255.1/24 10.255.255.254
 proc bfswd @NIX_PROFILE@/bin/start_bfswd.sh mpls
-proc bffwd @NIX_PROFILE@/bin/bf_forwarder.py --p4-program-name=bf_router_mpls --snmp --ifmibs-dir /var/run/rare-snmp --ifindex /etc/snmp/ifindex
+proc bffwd @NIX_PROFILE@/bin/bf_forwarder.py --platform=@HWID@ --p4-program-name=bf_router_mpls --snmp --ifmibs-dir /var/run/rare-snmp --ifindex /etc/snmp/ifindex

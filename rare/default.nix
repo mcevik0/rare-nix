@@ -1,32 +1,19 @@
-{ bf-sde, callPackage }:
+{ bf-sde, callPackage, platform }:
 
 let
-  programs = {
-    bier = {
-      buildFlags = [ "-DPROFILE_BIER" ];
-    };
-    gre = {
-      buildFlags = [ "-DPROFILE_GRE" ];
-    };
-    l2tp = {
-      buildFlags = [ "-DPROFILE_L2TP" ];
-    };
-    mldp = {
-      buildFlags = [ "-DPROFILE_MLDP" ];
-    };
-    mpls = {
-      buildFlags = [ "-DPROFILE_MPLS" ];
-    };
-    pppoe = {
-      buildFlags = [ "-DPROFILE_PPPOE" ];
-    };
-    rawip = {
-      buildFlags = [ "-DPROFILE_RAWIP" ];
-    };
+  platforms = import ./platforms.nix;
+  profiles = {
+    bier = [ "-DPROFILE_BIER" ];
+    gre = [ "-DPROFILE_GRE" ];
+    l2tp = [ "-DPROFILE_L2TP" ];
+    mldp = [ "-DPROFILE_MLDP" ];
+    mpls = [ "-DPROFILE_MPLS" ];
+    pppoe = [ "-DPROFILE_PPPOE" ];
+    rawip = [ "-DPROFILE_RAWIP" ];
   };
-  buildP4 = profile: attrs:
+  buildP4 = profile: buildFlags:
     callPackage ./p4.nix {
-      inherit bf-sde profile;
-      inherit (attrs) buildFlags;
-    };
-in builtins.mapAttrs buildP4 programs
+    inherit bf-sde profile platform;
+    buildFlags = buildFlags ++ platforms.${platform};
+  };
+in builtins.mapAttrs buildP4 profiles

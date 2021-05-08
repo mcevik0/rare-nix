@@ -1,15 +1,15 @@
-{ bf-sde, fetchgit, sal_modules, makeWrapper }:
+{ bf-sde, runtimeEnv, fetchgit, sal_modules, makeWrapper }:
 
 let
   repo = import ./repo.nix { inherit fetchgit; };
-  bf-drivers = bf-sde.pkgs.bf-drivers;
-  python = bf-drivers.pythonModule;
+  bf-drivers-runtime = bf-sde.pkgs.bf-drivers-runtime;
+  python = bf-drivers-runtime.pythonModule;
 in python.pkgs.buildPythonApplication rec {
   inherit (repo) version src;
   pname = "bf_forwarder";
 
   propagatedBuildInputs = [
-    bf-drivers sal_modules
+    bf-drivers-runtime sal_modules
   ];
   buildInputs = [ makeWrapper ];
 
@@ -19,6 +19,6 @@ in python.pkgs.buildPythonApplication rec {
 
   postInstall = ''
     wrapProgram $out/bin/bf_forwarder.py \
-      --set SDE ${bf-sde} --set SDE_INSTALL ${bf-sde}
+      --set SDE ${runtimeEnv} --set SDE_INSTALL ${runtimeEnv}
   '';
 }

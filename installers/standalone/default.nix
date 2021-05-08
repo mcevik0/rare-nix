@@ -7,19 +7,19 @@ let
       rootPaths = builtins.attrValues slice;
       closure = closureInfo { inherit rootPaths; };
     in builtins.concatStringsSep ":" (
-       with slice.kernelModules; [ kernelID kernelRelease closure ]
-       ++ rootPaths);
+      [ slice.sliceFile closure ] ++ rootPaths);
   sliceInfos = builtins.map sliceInfo (builtins.attrValues release);
   ID = "${version}:${gitTag}";
-in runCommand "RARE-OS-release-installer" {
+in runCommand "RARE-standalone-installer" {
   inherit sliceInfos;
 } ''
   mkdir tmp
   cd tmp
   storePaths=
   for info in $sliceInfos; do
-    read kernelID kernelRelease closureInfo rootPaths < <(echo $info | tr ':' ' ')
-    dest=$kernelRelease/$kernelID
+    read sliceFile closureInfo rootPaths < <(echo $info | tr ':' ' ')
+    read kernelID kernelRelease platform < <(cat $sliceFile/slice | tr ':' ' ')
+    dest=$kernelRelease/$kernelID/$platform
     mkdir -p $dest
     cp $closureInfo/{registration,store-paths} $dest
     storePaths="$storePaths $closureInfo/store-paths"
@@ -47,5 +47,7 @@ in runCommand "RARE-OS-release-installer" {
   cat archive.tar.xz >>$out/installer.sh
   chmod a+x $out/installer.sh
   patchShebangs $out/installer.sh
+  ## For the Hydra post-build hook
   echo ${ID} >$out/version
+  echo "RARE" >$out/component
 ''

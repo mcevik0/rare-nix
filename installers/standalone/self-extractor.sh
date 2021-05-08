@@ -7,7 +7,7 @@ cleanup () {
     chmod -R a+w $TMPDIR
     rm -rf $TMPDIR
 }
-export TMPDIR=$(mktemp -d /tmp/selfextract.XXXXXX)
+export TMPDIR=$(mktemp -d /var/tmp/selfextract.XXXXXX)
 trap cleanup EXIT TERM INT
 archive=$(awk '/^___ARCHIVE_BELOW___/ {print NR + 1; exit 0; }' $0)
 echo "Unpacking archive"

@@ -1,7 +1,7 @@
 ## When called from Hydra via release.nix or from "release-manager
 ## --install-git", we get the result of "git describe" passed in as
 ## gitTag.
-{ gitTag ? "WIP", kernelRelease ? null }:
+{ gitTag ? "WIP", kernelRelease ? null, platform ? null }:
 
 let
   pkgs = import (fetchTarball {
@@ -28,42 +28,45 @@ let
   sal_modules = pkgs.callPackage ./sal/modules.nix {
     inherit fetchBitbucketPrivate;
   };
-  programs = import ./rare {
-    inherit bf-sde;
-    inherit (pkgs) callPackage;
-  };
   bf-forwarder = pkgs.callPackage ./rare/bf-forwarder.nix {
     inherit bf-sde sal_modules;
+    inherit (bf-sde.pkgs) runtimeEnv;
   };
   services = import ./services { inherit pkgs; };
   release-manager = pkgs.callPackage ./release-manager {
     inherit version nixProfile;
   };
-  freerouter = pkgs.freerouter.overrideAttrs (oldAttrs: {
-    meta = oldAttrs.meta or {} // {
-	  outputsToInstall = [ "out" "native" ];
-	};
-  });
 
-  ## A slice is the subset of a release that only contains the
-  ## modules and wrappers for a single kernel.  At install time on a
+  ## A slice is the subset of a release that only contains the modules
+  ## and wrappers for a single kernel.  At install time on a
   ## particular system, the installer selects the slice that matches
   ## the system's kernel. A slice is identified by the kernelID of the
   ## selected modules package. The kernel release identifier is
   ## included as well to let the release-manager provide more useful
   ## output.
-  slice = kernelModules:
+  slice = kernelModules: platform:
     let
       sliceFile = pkgs.writeTextDir "slice"
-        "${kernelModules.kernelID}:${kernelModules.kernelRelease}\n";
-      moduleWrappers = builtins.mapAttrs
-                       (_: program: program.moduleWrapper' kernelModules) programs;
-      scripts = pkgs.callPackage ./scripts {
-        inherit bf-sde moduleWrappers;
+        "${kernelModules.kernelID}:${kernelModules.kernelRelease}:${platform}\n";
+      programs = import ./rare {
+        inherit bf-sde platform;
+        inherit (pkgs) callPackage;
       };
-    in moduleWrappers // services // {
+      moduleWrappers = builtins.mapAttrs
+        (_: program: program.moduleWrapper' kernelModules) programs;
+      scripts = pkgs.callPackage ./scripts {
+        inherit moduleWrappers;
+        inherit (bf-sde.pkgs) runtimeEnv;
+      };
+      freeRtrHwConfig = pkgs.callPackage ./release-manager/rtr-hw.nix {
+        inherit platform nixProfile;
+      };
+    in moduleWrappers // services // rec {
       inherit versionFile sliceFile scripts release-manager bf-forwarder
-              kernelModules freerouter;
+        kernelModules freeRtrHwConfig;
+      inherit (pkgs) freerouter;
+      freerouter-native = freerouter.native;
+
       ## We want to have bfshell in the profile's bin directory. To
       ## achieve that, it should be enough to inherit bf-utils here.
       ## However, bf-utils is a multi-output package and nix-env
@@ -77,8 +80,21 @@ let
         paths = [ bf-sde.pkgs.bf-utils ];
       };
     };
+
   ## A release is the union of the slices for all supported kernels
-  release = builtins.mapAttrs (_: modules: slice modules) bf-sde.pkgs.kernel-modules;
+  ## and platforms.
+  platforms = builtins.attrNames (import ./rare/platforms.nix);
+  namesFromAttrs = attrs:
+    attrs.platform + "_" + attrs.kernelModules.kernelID;
+  release = builtins.foldl' (final: next:
+    final // {
+      ${namesFromAttrs next} = slice next.kernelModules next.platform;
+    })
+    {}
+    (pkgs.lib.crossLists (platform: kernelModules: { inherit platform kernelModules; }) [
+      platforms
+      (builtins.attrValues bf-sde.pkgs.kernel-modules)
+    ]);
 
   ## The closure of the release is the list of paths that needs to be
   ## available on a binary cache for pure binary deployments.  To
@@ -89,43 +105,29 @@ let
   ## the releaseClosure to find all paths from a single derivation. It
   ## is triggered by the name of that derivation, hence the override.
   releaseClosure = (pkgs.closureInfo {
-    rootPaths = builtins.foldl'
-                  (final: next: final ++ (builtins.attrValues next)) []
-                  (builtins.attrValues release);
+    rootPaths = with pkgs.lib; collect (set: isDerivation set) release;
   }).overrideAttrs (_: { name = "RARE-release-closure"; });
 
-  mkOnieInstaller = pkgs.callPackage (pkgs.fetchgit {
-    url = "https://github.com/alexandergall/onie-debian-nix-installer";
-    rev = "be4053";
-    sha256 = "1m74hl9f34i5blpb0l6vfq5mzaqjh1nv50nyj1m3x29wyzks2scc";
-  }) {};
-  onieInstaller = mkOnieInstaller {
-    inherit nixProfile version;
-    component = "RARE";
-    NOS = "RARE-OS";
-    ## The kernel selected here must match the kernel provided by the
-    ## bootstrap profile.
-    rootPaths = builtins.attrValues (slice bf-sde.pkgs.kernel-modules.Debian10_9);
-    bootstrapProfile = ./installers/onie/profile;
-    binaryCaches = [ {
-      url = "http://p4.cache.nix.net.switch.ch";
-      key = "p4.cache.nix.net.switch.ch:cR3VMGz/gdZIdBIaUuh42clnVi5OS1McaiJwFTn5X5g=";
-    } ];
-    fileTree = ./installers/onie/files;
-    #activationCmd = "${nixProfile}/bin/release-manager --activate-current";
+  onieInstaller = import installers/onie {
+    ## The ONIE installer uses a specific kernel which is determined
+    ## at the time the mk-profile.sh utility was run to produce a
+    ## snapshot of a Debian system with debootsrap. That particular
+    ## kernel must be one of the kernels supported by
+    ## bf-sde-nixpkgs. This partial evaluation of the slice selects
+    ## that kernel.
+    slice = slice bf-sde.pkgs.kernel-modules.Debian10_9;
+    inherit pkgs version nixProfile platforms;
   };
-  releaseInstaller = pkgs.callPackage ./installers/release-installer.nix {
+  standaloneInstaller = pkgs.callPackage ./installers/standalone {
     inherit release version gitTag nixProfile;
   };
 
 in {
-  inherit release releaseClosure onieInstaller releaseInstaller;
+  inherit release releaseClosure onieInstaller standaloneInstaller;
 
   ## Final installation on the target system with
-  ##   nix-env -f . -p <some-profile-name> -r -i -A install --argstr kernelRelease $(uname -r)
+  ##   nix-env -f . -p <some-profile-name> -r -i -A install --argstr kernelRelease $(uname -r) --argstr platform <platform
   install =
-    if kernelRelease != null then
-      slice (bf-sde.modulesForKernel kernelRelease)
-    else
-      throw "Missing required argument kernelRelease";
+    assert kernelRelease != null && platform != null;
+    slice (bf-sde.modulesForKernel kernelRelease) platform;
 }

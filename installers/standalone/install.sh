@@ -1,16 +1,6 @@
 #!/bin/bash
 set -e
 
-partial_id=$(cat ./version)
-PROFILE=$(cat ./profile)
-kernelRelease=${KERNEL_RELEASE:-$(uname -r)}
-
-## Rely on the self-extractor to export PATH. If we set PATH here, Nix
-## won't find it during its scan for runtime dependencies because this
-## file is compressed.
-PATH=/nix/var/nix/profiles/default/bin:$PATH
-NIX_PATH=
-
 if [ $(tput colors) -gt 1 ]; then
     red=$(tput setaf 1)
     green=$(tput setaf 2)
@@ -25,6 +15,24 @@ ERROR () {
     echo "${red}ERROR: $@${normal}"
     exit 1
 }
+
+partialID=$(cat ./version)
+PROFILE=$(cat ./profile)
+kernelRelease=${KERNEL_RELEASE:-$(uname -r)}
+if [ -f /etc/machine.conf ]; then
+    . /etc/machine.conf
+fi
+platform=${PLATFORM:-$onie_machine}
+
+[ -n "$platform" ] || \
+    ERROR "Can't determine platform, either from \"onie_machine\"" \
+          "in /etc/machine.conf or the PLATFORM environment variable"
+
+## Rely on the self-extractor to export PATH. If we set PATH here, Nix
+## won't find it during its scan for runtime dependencies because this
+## file is compressed.
+PATH=/nix/var/nix/profiles/default/bin:$PATH
+NIX_PATH=
 
 declare -A gens gens_by_id
 
@@ -48,9 +56,9 @@ if [ -h $PROFILE ]; then
     current_gen=$(gen_from_path $(readlink $PROFILE))
 fi
 
-read version gitTag < <(echo $partial_id | tr ':' ' ')
-INFO "Installing RARE OS release $version (Id: $partial_id)"\
-     "for kernel $kernelRelease in $PROFILE"
+read version gitTag < <(echo $partialID | tr ':' ' ')
+INFO "Installing RARE OS release $version (Id: $partialID)"\
+     "for kernel $kernelRelease on platform $platform in $PROFILE"
 [ $(id -u) == 0 ] || ERROR "Please run this command as root"
 
 [ -d $kernelRelease ] || ERROR "Unsupported kernel"
@@ -63,16 +71,18 @@ if [ $(echo $kernelIDs | wc -w) -gt 1 ]; then
     [ -n "$SDE_KERNEL_ID" ] || \
         ERROR "Please set SDE_KERNEL_ID to one of "\
               "the values above to select a particular package"
-    closureInfo=$kernelRelease/$SDE_KERNEL_ID
-    [ -d  $closureInfo ] || \
+    [ -d  $kernelRelease/$SDE_KERNEL_ID ] || \
         ERROR "SDE_KERNEL_ID: invalid value $SDE_KERNEL_ID"
-    kernel_id=$SDE_KERNEL_ID
+    kernelID=$SDE_KERNEL_ID
 else
-    kernel_id=$(basename $kernelIDs)
-    closureInfo=$kernelIDs
+    kernelID=$(basename $kernelIDs)
 fi
 
-id=${partial_id}:${kernel_id}:${kernelRelease}
+closureInfo=$kernelRelease/$kernelID/$platform
+
+[ -d $closureInfo ] || ERROR "Unsupported platform: $platform"
+
+id=${partialID}:${kernelID}:${kernelRelease}:${platform}
 if [ -n "${gens_by_id[$id]}" ]; then
     INFO "This release is already installed as generation ${gens_by_id[$id]}:"
     $PROFILE/bin/release-manager --list-installed

@@ -1,5 +1,5 @@
 { stdenv, lib, version, nixProfile, coreutils, utillinux, gnused,
-  gawk, jq, curl, systemd, gnutar, gzip, git, kmod, ncurses }:
+  gawk, jq, curl, systemd, gnutar, gzip, gitMinimal, kmod, ncurses }:
 
 stdenv.mkDerivation {
   pname = "release-manager";
@@ -10,15 +10,13 @@ stdenv.mkDerivation {
     substitute ${./release-manager} $out/bin/release-manager \
       --subst-var-by PATH \
         "${lib.strings.makeBinPath [ coreutils utillinux gnused gawk
-                                      jq curl systemd gnutar gzip git
+                                      jq curl systemd gnutar gzip gitMinimal
                                       kmod ncurses ]}" \
       --subst-var-by PROFILE ${nixProfile}
     chmod a+x $out/bin/*
     patchShebangs $out/bin
 
     mkdir -p $out/etc/freertr
-    substitute ${./rtr-hw.txt} $out/etc/freertr/rtr-hw.txt \
-      --subst-var-by NIX_PROFILE ${nixProfile}
     substitute ${./rtr-sw.txt} $out/etc/freertr/rtr-sw.txt \
       --subst-var-by NIX_PROFILE ${nixProfile}
 
