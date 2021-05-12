@@ -11,7 +11,7 @@
         "emailoverride": "",
         "keepnr": 3,
         "inputs": {
-            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare.git master deepClone ", "emailresponsible": false },
+            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git master deepClone ", "emailresponsible": false },
 	    "buildInstaller": { "type": "boolean", "value": "true" }
         }
     }
