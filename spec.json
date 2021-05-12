@@ -1,0 +1,18 @@
+{
+    "development": {
+        "enabled": 1,
+        "hidden": false,
+        "description": "Development of upcoming release",
+        "nixexprinput": "src",
+        "nixexprpath": "release.nix",
+        "checkinterval": 300,
+        "schedulingshares": 100,
+        "enableemail": false,
+        "emailoverride": "",
+        "keepnr": 3,
+        "inputs": {
+            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare.git master deepClone ", "emailresponsible": false },
+	    "buildInstaller": { "type": "boolean", "value": "true" }
+        }
+    }
+}
