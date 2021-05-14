@@ -38,12 +38,9 @@ let
   };
 
   ## A slice is the subset of a release that only contains the modules
-  ## and wrappers for a single kernel.  At install time on a
-  ## particular system, the installer selects the slice that matches
-  ## the system's kernel. A slice is identified by the kernelID of the
-  ## selected modules package. The kernel release identifier is
-  ## included as well to let the release-manager provide more useful
-  ## output.
+  ## and wrappers for a single kernel and a particular platform..  At
+  ## install time, the installer selects the slice that matches the
+  ## system's kernel and platform.
   slice = kernelModules: platform:
     let
       sliceFile = pkgs.writeTextDir "slice"

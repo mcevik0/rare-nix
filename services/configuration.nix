@@ -1,6 +1,14 @@
 { config, pkgs, ... }:
 
-{
+let
+  maybeReboot = pkgs.writeShellScript "freertr-exec-stop-post" ''
+    if [ $EXIT_STATUS -eq 4 ]; then
+      echo "cold reload requested by freeRtr, initiating reboot"
+      ${pkgs.systemd}/bin/systemctl reboot
+    fi
+    exit 0
+  '';
+in {
   systemd.services = {
     freerouter = {
       description = "freeRtr Daemon";
@@ -8,6 +16,7 @@
       requires = [ "networking.service" ];
       serviceConfig = {
         ExecStart = "${pkgs.freerouter}/bin/freerouter router /etc/freertr/rtr-";
+        ExecStopPost = "${maybeReboot}";
         Restart = "on-failure";
         Type = "simple";
       };
