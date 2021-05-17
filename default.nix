@@ -28,13 +28,31 @@ let
   sal_modules = pkgs.callPackage ./sal/modules.nix {
     inherit fetchBitbucketPrivate;
   };
-  bf-forwarder = pkgs.callPackage ./rare/bf-forwarder.nix {
-    inherit bf-sde sal_modules;
-    inherit (bf-sde.pkgs) runtimeEnv;
-  };
-  services = import ./services { inherit pkgs; };
-  release-manager = pkgs.callPackage ./release-manager {
-    inherit version nixProfile;
+  sliceCommon = rec {
+    inherit versionFile;
+    bf-forwarder = pkgs.callPackage ./rare/bf-forwarder.nix {
+      inherit bf-sde sal_modules;
+      inherit (bf-sde.pkgs) runtimeEnv;
+    };
+    services = import ./services { inherit pkgs; };
+    release-manager = pkgs.callPackage ./release-manager {
+      inherit version nixProfile;
+    };
+    inherit (pkgs) freerouter;
+    freerouter-native = freerouter.native;
+
+    ## We want to have bfshell in the profile's bin directory. To
+    ## achieve that, it should be enough to inherit bf-utils here.
+    ## However, bf-utils is a multi-output package and nix-env
+    ## unconditonally realizes all outputs when it should just use
+    ## meta.outputsToInstall. In this case, the second output is
+    ## "dev", which requires the full SDE to be available. This will
+    ## fail in a runtime-only binary deployment.  We work around this
+    ## by wrapping bf-utils in an environment.
+    bf-utils-env = pkgs.buildEnv {
+      name = "bf-utils-env";
+      paths = [ bf-sde.pkgs.bf-utils ];
+    };
   };
 
   ## A slice is the subset of a release that only contains the modules
@@ -58,28 +76,14 @@ let
       freeRtrHwConfig = pkgs.callPackage ./release-manager/rtr-hw.nix {
         inherit platform nixProfile;
       };
-    in moduleWrappers // services // rec {
-      inherit versionFile sliceFile scripts release-manager bf-forwarder
-        kernelModules freeRtrHwConfig;
-      inherit (pkgs) freerouter;
-      freerouter-native = freerouter.native;
-
-      ## We want to have bfshell in the profile's bin directory. To
-      ## achieve that, it should be enough to inherit bf-utils here.
-      ## However, bf-utils is a multi-output package and nix-env
-      ## unconditonally realizes all outputs when it should just use
-      ## meta.outputsToInstall. In this case, the second output is
-      ## "dev", which requires the full SDE to be available. This will
-      ## fail in a runtime-only binary deployment.  We work around this
-      ## by wrapping bf-utils in an environment.
-      bf-utils-env = pkgs.buildEnv {
-        name = "bf-utils-env";
-        paths = [ bf-sde.pkgs.bf-utils ];
-      };
+    in sliceCommon // moduleWrappers // {
+      inherit sliceFile scripts freeRtrHwConfig kernelModules;
     };
 
   ## A release is the union of the slices for all supported kernels
-  ## and platforms.
+  ## and platforms. The slices have a fairly large overlap of
+  ## identical packages, which creates a rather big Hydra job set, but
+  ## that's just a cosmetic issue.
   platforms = builtins.attrNames (import ./rare/platforms.nix);
   namesFromAttrs = attrs:
     attrs.platform + "_" + attrs.kernelModules.kernelID;

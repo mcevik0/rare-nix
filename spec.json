@@ -18,7 +18,7 @@
     "release-1alpha": {
         "enabled": 1,
         "hidden": false,
-        "description": "Development of upcoming release",
+        "description": "Pre-release of version 1",
         "nixexprinput": "src",
         "nixexprpath": "release.nix",
         "checkinterval": 300,
