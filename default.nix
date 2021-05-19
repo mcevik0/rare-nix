@@ -28,13 +28,12 @@ let
   sal_modules = pkgs.callPackage ./sal/modules.nix {
     inherit fetchBitbucketPrivate;
   };
-  sliceCommon = rec {
+  sliceCommon = (import ./services { inherit pkgs; }) // rec {
     inherit versionFile;
     bf-forwarder = pkgs.callPackage ./rare/bf-forwarder.nix {
       inherit bf-sde sal_modules;
       inherit (bf-sde.pkgs) runtimeEnv;
     };
-    services = import ./services { inherit pkgs; };
     release-manager = pkgs.callPackage ./release-manager {
       inherit version nixProfile;
     };
