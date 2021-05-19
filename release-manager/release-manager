@@ -4,8 +4,8 @@ set -o pipefail
 shopt -s extglob
 
 PROFILE=@PROFILE@
-REPO_GIT="https://bitbucket.software.geant.org/scm/rare/rare.git"
-REPO_API="https://bitbucket.software.geant.org/rest/api/1.0/projects/RARE/repos/RARE"
+REPO_GIT="https://bitbucket.software.geant.org/scm/rare/rare-nix.git"
+REPO_API="https://bitbucket.software.geant.org/rest/api/1.0/projects/RARE/repos/RARE-NIX"
 
 PATH=/nix/var/nix/profiles/default/bin:@PATH@
 NIX_PATH=
@@ -155,6 +155,9 @@ for path in $PROFILE-*-link; do
 done
 current_gen=$(gen_from_path $(readlink $PROFILE))
 kernel_release=${KERNEL_RELEASE:-$(uname -r)}
+. /etc/machine.conf
+platform=$onie_machine
+[ -z "$platform" ] && ERROR "Can't determine platform (check onie_machine in /etc/machine.conf)"
 
 check_root () {
     [ $(id -u) == 0 ] && return
@@ -220,13 +223,14 @@ deactivate () {
 }
 
 list_installed () {
-    echo "Generation Current Release Git Tag                  KernelID       Kernel Release            Platform                   Install date"
+    local version gitTag kernelID kernelRelease platform is_current
+    echo "Generation Current Release Git Tag                    KernelID       Kernel Release            Platform                   Install date"
     echo "-----------------------------------------------------------------------------------------------------------------------------------------------------------"
     for gen in $(printf '%s\n' "${!gens[@]}" | sort -n); do
         read version gitTag kernelID kernelRelease platform < <(echo ${gens[$gen]} | tr ':' ' ')
         is_current=' '
         [ $gen -eq $current_gen ] && is_current='*'
-        printf "%10d $is_current       %-7s %-24s %-14s %-25s %-26s %s\n" $gen $version $gitTag $kernelID $kernelRelease $platform "${install_dates[$gen]}"
+        printf "%10d $is_current       %-7s %-26s %-14s %-25s %-26s %s\n" $gen $version $gitTag $kernelID $kernelRelease $platform "${install_dates[$gen]}"
     done
 }
 
@@ -257,8 +261,8 @@ api_call () {
 
 get_available_releases () {
     INFO "Checking for release tags of $REPO_GIT"
-    result=$(api_call /tags)
-    for tag in $(jq -r '.[].name' <<<$result); do
+    result=$(api_call '/tags?limit=1000')
+    for tag in $(jq -rc '.values[].displayId' <<<$result); do
         [[ $tag =~ ^release-.*$ ]] || continue
         version=$(echo $tag | cut -d- -f2)
         available_releases[$version]=$tag
@@ -266,7 +270,6 @@ get_available_releases () {
 }
 
 list_available () {
-    ERROR "Not yet implemented"
     get_available_releases
     echo
     echo "Version  Status"
@@ -276,9 +279,8 @@ list_available () {
         if [ -n "${installed_releases[$version]}" ]; then
             printf 'Installed'
             gitTag=${available_releases[$version]}
-            commit_head=$(api_call /git/ref/heads/$(branch_from_tag $gitTag) | jq -r '.object.sha')
-            tag_sha=$(api_call /git/ref/tags/$gitTag | jq -r '.object.sha')
-            commit_tag=$(api_call /git/tags/$tag_sha | jq -r '.object.sha')
+            commit_head=$(api_call '/branches?limit=1000&filterText='$(branch_from_tag $gitTag) | jq -r '.values[0].latestCommit')
+            commit_tag=$(api_call '/tags?limit=1000&name='$(branch_from_tag $gitTag) | jq -r '.values[0].latestCommit')
             if [ $commit_tag != $commit_head ]; then
                 up_to_date=
                 for tag in ${installed_releases[$version]}; do
@@ -318,7 +320,7 @@ switch_to_generation () {
 
 _check_installed () {
     id=$(nix eval --raw \
-             '(with import ./. { gitTag = "'$gitTag'"; kernelRelease = "'$kernel_release'"; };
+             '(with import ./. { gitTag = "'$gitTag'"; kernelRelease = "'$kernel_release'"; platform = "'$platform'"; };
                with install; with builtins;
                replaceStrings ["\n"] [""] (readFile (versionFile + "/version") + ":" +
                                            readFile (sliceFile + "/slice")))')
@@ -330,7 +332,7 @@ _check_installed () {
 
 _install () {
     gitTag=$1
-    nix-env -f . -p $PROFILE -r -i -A install --argstr gitTag $gitTag --argstr kernelRelease $kernel_release
+    nix-env -f . -p $PROFILE -r -i -A install --argstr gitTag $gitTag --argstr kernelRelease $kernel_release --argstr platform $platform
     new_gen=$(gen_from_path $(readlink $PROFILE))
     ## nix-env has automatically switched to the new
     ## generation, revert back
@@ -387,10 +389,9 @@ install_release () {
 }
 
 update_release () {
-    ERROR "Not yet implemented"
     _check_release $update_release
     check_root
-    install_git=$(api_call /git/ref/heads/$(branch_from_tag $gitTag) | jq -r '.object.sha')
+    install_git=$(api_call '/branches?limit=1000&filterText='$(branch_from_tag $gitTag) | jq -r '.values[0].latestCommit')
     install_git
 }
 
