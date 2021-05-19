@@ -373,16 +373,14 @@ _check_release () {
 }
 
 install_release () {
-    ERROR "Not yet implemented"
     _check_release $install_release
     check_root
-    tarball=$REPO_GIT/archive/$gitTag.tar.gz
     INFO "Fetching package release tarball $tarball"
     tmp=$(mktemp -d)
     paths_to_rm+=$tmp
     pushd $tmp >/dev/null
-    curl -L -O $tarball 2>/dev/null
-    tar xf release-* --strip-component 1
+    curl -L --output ${gitTag}.tar.gz $REPO_API'/archive?at='$gitTag'&format=tar.gz' 2>/dev/null
+    tar xf release-*
     _check_installed
     _install $gitTag
     popd >/dev/null
