@@ -46,5 +46,21 @@
             "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1beta deepClone ", "emailresponsible": false },
 	    "buildInstaller": { "type": "boolean", "value": "true" }
         }
+    },
+    "release-1gamma": {
+        "enabled": 1,
+        "hidden": false,
+        "description": "Pre-release of version 1",
+        "nixexprinput": "src",
+        "nixexprpath": "release.nix",
+        "checkinterval": 300,
+        "schedulingshares": 100,
+        "enableemail": false,
+        "emailoverride": "",
+        "keepnr": 3,
+        "inputs": {
+            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1gamma deepClone ", "emailresponsible": false },
+	    "buildInstaller": { "type": "boolean", "value": "true" }
+        }
     }
 }
