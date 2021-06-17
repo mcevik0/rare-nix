@@ -5,18 +5,21 @@
 
 let
   pkgs = import (fetchTarball {
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/v7.tar.gz;
-    sha256 = "1g5jw4pi3sqi8lkdjjp4lix74sdc57v7a4ff5ymakyq4d1npsm13";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/v8.tar.gz;
+    sha256 = "04v45yv3wqr00khj67xywxlzkci4x2zs6hg8ks4f8i6bjskgqxgl";
   }) {
     overlays = import ./overlay;
   };
 
-  ## Release wokflow:
+  ## Release workflow when the final change has been committed (that
+  ## commit should also include the final version of the release
+  ## notes):
   ##   * tag commit with release-<version>
   ##   * create a branch <version>
-  ##   * Add Hydra CI job for <version> branch to spec.json
-  ##   * Bump version <version+1>
-  ##   * Add release-notes/release-<version+1>
+  ##   * Create a new commit on master
+  ##      * Add Hydra CI job for <version> branch to spec.json
+  ##      * Bump version <version+1>
+  ##      * Add release-notes/release-<version+1>
   version = "1gamma";
   versionFile = pkgs.writeTextDir "version" "${version}:${gitTag}\n";
   nixProfile = "/nix/var/nix/profiles/RARE";
@@ -28,34 +31,27 @@ let
   sal_modules = pkgs.callPackage ./sal/modules.nix {
     inherit fetchBitbucketPrivate;
   };
-  sliceCommon = (import ./services { inherit pkgs; }) // rec {
+  sliceCommon = (import ./services { inherit pkgs; }) // {
     inherit versionFile;
     bf-forwarder = pkgs.callPackage ./rare/bf-forwarder.nix {
       inherit bf-sde sal_modules;
-      inherit (bf-sde.pkgs) runtimeEnv;
     };
     release-manager = pkgs.callPackage ./release-manager {
       inherit version nixProfile;
     };
     inherit (pkgs) freerouter;
-    freerouter-native = freerouter.native;
 
-    ## We want to have bfshell in the profile's bin directory. To
-    ## achieve that, it should be enough to inherit bf-utils here.
-    ## However, bf-utils is a multi-output package and nix-env
-    ## unconditonally realizes all outputs when it should just use
-    ## meta.outputsToInstall. In this case, the second output is
-    ## "dev", which requires the full SDE to be available. This will
-    ## fail in a runtime-only binary deployment.  We work around this
-    ## by wrapping bf-utils in an environment.
-    bf-utils-env = pkgs.buildEnv {
-      name = "bf-utils-env";
-      paths = [ bf-sde.pkgs.bf-utils ];
+    ## nix-env does not handle multi-output derivations correctly. We
+    ## work around this by wrapping those derivations in an
+    ## environment.
+    auxEnv = pkgs.buildEnv {
+      name = "aux-env";
+      paths = [ bf-sde.pkgs.bf-utils pkgs.freerouter.native ];
     };
   };
 
   ## A slice is the subset of a release that only contains the modules
-  ## and wrappers for a single kernel and a particular platform..  At
+  ## and wrappers for a single kernel and a particular platform.  At
   ## install time, the installer selects the slice that matches the
   ## system's kernel and platform.
   slice = kernelModules: platform:
@@ -70,7 +66,7 @@ let
         (_: program: program.moduleWrapper' kernelModules) programs;
       scripts = pkgs.callPackage ./scripts {
         inherit moduleWrappers;
-        inherit (bf-sde.pkgs) runtimeEnv;
+        runtimeEnv = bf-sde.runtimeEnvNoBsp;
       };
       freeRtrHwConfig = pkgs.callPackage ./release-manager/rtr-hw.nix {
         inherit platform nixProfile;
@@ -126,7 +122,7 @@ in {
   inherit release releaseClosure onieInstaller standaloneInstaller;
 
   ## Final installation on the target system with
-  ##   nix-env -f . -p <some-profile-name> -r -i -A install --argstr kernelRelease $(uname -r) --argstr platform <platform
+  ##   nix-env -f . -p <some-profile-name> -r -i -A install --argstr kernelRelease $(uname -r) --argstr platform <platform>
   install =
     assert kernelRelease != null && platform != null;
     slice (bf-sde.modulesForKernel kernelRelease) platform;

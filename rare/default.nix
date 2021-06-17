@@ -1,7 +1,7 @@
 { bf-sde, callPackage, platform }:
 
 let
-  platforms = import ./platforms.nix;
+  platformBuildFlags = (import ./platforms.nix).${platform};
   profiles = {
     bier = [ "-DPROFILE_BIER" ];
     gre = [ "-DPROFILE_GRE" ];
@@ -13,7 +13,7 @@ let
   };
   buildP4 = profile: buildFlags:
     callPackage ./p4.nix {
-    inherit bf-sde profile platform;
-    buildFlags = buildFlags ++ platforms.${platform};
+      inherit bf-sde profile platform;
+      buildFlags = buildFlags ++ platformBuildFlags;
   };
 in builtins.mapAttrs buildP4 profiles

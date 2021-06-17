@@ -1,5 +1,5 @@
 { runtimeEnv, moduleWrappers, runCommand, lib, makeWrapper,
-  buildEnv, coreutils, utillinux, inetutils }:
+  buildEnv, inetutils, killall }:
 
 let
   install = name: ''
@@ -24,7 +24,8 @@ in runCommand "RARE-scripts" {
   + ''
 
     substitute ${./start_bfswd.sh} $out/bin/start_bfswd.sh \
-      --subst-var-by WRAPPERS ${wrappersEnv}
+      --subst-var-by WRAPPERS ${wrappersEnv} \
+      --replace killall ${killall}/bin/killall
     chmod a+x $out/bin/start_bfswd.sh
 
     cp ${./if-wrapper.sh} $out/bin/if-wrapper.sh

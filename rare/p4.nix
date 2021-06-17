@@ -6,6 +6,7 @@ let
     lib.optionalString (profile != null) "${sep}${profile}";
 in bf-sde.buildP4Program {
   inherit (repo) version src;
+  inherit platform;
   pname = "RARE-${profile}-${platform}";
   p4Name = "bf_router";
   path = "p4src";

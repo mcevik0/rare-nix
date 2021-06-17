@@ -1,6 +1,8 @@
 {
-  accton_wedge100bf_32x = [ "-D_WEDGE100BF32X_" ];
-  accton_wedge100bf_65x = [ "-D_WEDGE100BF65X_" ];
-  #stordis_bf2556x_1t = [ ];
-  #stordis_bf6064x_t = [ ];
+  accton_wedge100bf_32x = [ "-DDUAL_PIPE" ];
+  accton_wedge100bf_32qs = [ "-DQUAD_PIPE" ];
+  accton_wedge100bf_65x = [ "-DQUAD_PIPE" ];
+  inventec_d5264q28b = [ "-DQUAD_PIPE" ];
+  #stordis_bf2556x_1t = [ "-DDUAL_PIPE" ];
+  stordis_bf6064x_t = [ "-DQUAD_PIPE" ];
 }

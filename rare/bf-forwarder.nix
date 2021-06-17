@@ -1,4 +1,4 @@
-{ bf-sde, runtimeEnv, fetchgit, sal_modules, makeWrapper }:
+{ bf-sde, fetchgit, sal_modules }:
 
 let
   repo = import ./repo.nix { inherit fetchgit; };
@@ -11,14 +11,8 @@ in python.pkgs.buildPythonApplication rec {
   propagatedBuildInputs = [
     bf-drivers-runtime sal_modules
   ];
-  buildInputs = [ makeWrapper ];
 
   preConfigure = ''
     cd bfrt_python
-  '';
-
-  postInstall = ''
-    wrapProgram $out/bin/bf_forwarder.py \
-      --set SDE ${runtimeEnv} --set SDE_INSTALL ${runtimeEnv}
   '';
 }
