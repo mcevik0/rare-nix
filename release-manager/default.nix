@@ -1,25 +1,14 @@
-{ stdenv, lib, version, nixProfile, coreutils, utillinux, gnused,
-  gawk, jq, curl, systemd, gnutar, gzip, gitMinimal, kmod, ncurses }:
+{ support, version, nixProfile }:
 
-stdenv.mkDerivation {
-  pname = "release-manager";
-  inherit version;
-  phases = [ "installPhase" ];
-  installPhase = ''
-    mkdir -p $out/bin
-    substitute ${./release-manager} $out/bin/release-manager \
-      --subst-var-by PATH \
-        "${lib.strings.makeBinPath [ coreutils utillinux gnused gawk
-                                      jq curl systemd gnutar gzip gitMinimal
-                                      kmod ncurses ]}" \
-      --subst-var-by PROFILE ${nixProfile}
-    chmod a+x $out/bin/*
-    patchShebangs $out/bin
-
+support.mkReleaseManager {
+  inherit version nixProfile;
+  apiType = "bitbucket";
+  repoUrl = "https://bitbucket.software.geant.org/scm/rare/rare-nix.git";
+  apiUrl = "https://bitbucket.software.geant.org/rest/api/1.0/projects/RARE/repos/RARE-NIX";
+  activationCode = ./activation.sh;
+  installCmds = ''
     mkdir -p $out/etc/freertr
-    substitute ${./rtr-sw.txt} $out/etc/freertr/rtr-sw.txt \
-      --subst-var-by NIX_PROFILE ${nixProfile}
-
+    substitute ${./rtr-sw.txt} $out/etc/freertr/rtr-sw.txt --subst-var-by NIX_PROFILE ${nixProfile}
     mkdir -p $out/etc/snmp $out/var/lib/snmp
     cp ${./snmpd.conf} $out/etc/snmp/snmpd.conf
     cp ${./ifindex.init} $out/etc/snmp/ifindex.init

@@ -5,8 +5,8 @@
 
 let
   pkgs = import (fetchTarball {
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/v8.tar.gz;
-    sha256 = "04v45yv3wqr00khj67xywxlzkci4x2zs6hg8ks4f8i6bjskgqxgl";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/v10.tar.gz;
+    sha256 = "17qhf9qdbb2x2rp02svcmkmshl00hk90a6p69v2axvm3hb3835w5";
   }) {
     overlays = import ./overlay;
   };
@@ -24,8 +24,10 @@ let
   versionFile = pkgs.writeTextDir "version" "${version}:${gitTag}\n";
   nixProfile = "/nix/var/nix/profiles/RARE";
 
-  ## Build the main components with the latest SDE version
-  bf-sde = pkgs.bf-sde.latest;
+  ## v10 supports 9.6.0, but only the reference BSP is available for
+  ## that version.
+  bf-sde = pkgs.bf-sde.v9_5_0;
+  support = bf-sde.support;
 
   fetchBitbucketPrivate = pkgs.callPackage ./fetchbitbucket {};
   sal_modules = pkgs.callPackage ./sal/modules.nix {
@@ -36,8 +38,8 @@ let
     bf-forwarder = pkgs.callPackage ./rare/bf-forwarder.nix {
       inherit bf-sde sal_modules;
     };
-    release-manager = pkgs.callPackage ./release-manager {
-      inherit version nixProfile;
+    release-manager = import ./release-manager {
+      inherit support version nixProfile;
     };
     inherit (pkgs) freerouter;
 
@@ -80,44 +82,32 @@ let
   ## identical packages, which creates a rather big Hydra job set, but
   ## that's just a cosmetic issue.
   platforms = builtins.attrNames (import ./rare/platforms.nix);
-  namesFromAttrs = attrs:
-    attrs.platform + "_" + attrs.kernelModules.kernelID;
-  release = builtins.foldl' (final: next:
-    final // {
-      ${namesFromAttrs next} = slice next.kernelModules next.platform;
-    })
-    {}
-    (pkgs.lib.crossLists (platform: kernelModules: { inherit platform kernelModules; }) [
-      platforms
-      (builtins.attrValues bf-sde.pkgs.kernel-modules)
-    ]);
-
-  ## The closure of the release is the list of paths that needs to be
-  ## available on a binary cache for pure binary deployments.  To
-  ## satisfy restrictions imposed by Intel on the distribution of
-  ## parts of the SDE as a runtime system, we set up a post-build hook
-  ## on the Hydra CI system to copy these paths to a separate binary
-  ## cache which can be made available to third parties. The hook uses
-  ## the releaseClosure to find all paths from a single derivation. It
-  ## is triggered by the name of that derivation, hence the override.
-  releaseClosure = (pkgs.closureInfo {
-    rootPaths = with pkgs.lib; collect (set: isDerivation set) release;
-  }).overrideAttrs (_: { name = "RARE-release-closure"; });
-
-  onieInstaller = import installers/onie {
-    ## The ONIE installer uses a specific kernel which is determined
-    ## at the time the mk-profile.sh utility was run to produce a
-    ## snapshot of a Debian system with debootsrap. That particular
-    ## kernel must be one of the kernels supported by
-    ## bf-sde-nixpkgs. This partial evaluation of the slice selects
-    ## that kernel.
-    slice = slice bf-sde.pkgs.kernel-modules.Debian10_9;
-    inherit pkgs version nixProfile platforms;
+  release = support.mkRelease slice bf-sde.pkgs.kernel-modules platforms;
+  component = "RARE";
+  releaseClosure = support.mkReleaseClosure release component;
+  onieInstaller = (support.mkOnieInstaller {
+    inherit version nixProfile platforms component;
+    ## The kernel used here must match that from the profile
+    partialSlice = slice bf-sde.pkgs.kernel-modules.Debian10_9;
+    bootstrapProfile = ./onie/profile;
+    fileTree = ./onie/files;
+    NOS = "${component}-OS";
+    binaryCaches = [ {
+      url = "http://p4.cache.nix.net.switch.ch";
+      key = "p4.cache.nix.net.switch.ch:cR3VMGz/gdZIdBIaUuh42clnVi5OS1McaiJwFTn5X5g=";
+    } ];
+    users = {
+      rare = {
+        useraddArgs = "-s /bin/bash";
+        password = "rare";
+        sshPublicKey = pkgs.lib.removeSuffix "\n" (builtins.readFile ./onie/rare_id.pub);
+        passwordlessSudo = false;
+      };
+    };
+  }).override { memSize = 5*1024; };
+  standaloneInstaller = support.mkStandaloneInstaller {
+    inherit release version gitTag nixProfile component;
   };
-  standaloneInstaller = pkgs.callPackage ./installers/standalone {
-    inherit release version gitTag nixProfile;
-  };
-
 in {
   inherit release releaseClosure onieInstaller standaloneInstaller;
 
