@@ -33,9 +33,9 @@ stdenv.mkDerivation rec {
     pushd src
     mkdir -p $out/bin
     mkdir -p $out/share/java
-    jar cf $out/share/java/freerouter.jar router.class */*.class
+    jar cf $out/share/java/rtr.jar router.class */*.class
     makeWrapper ${jre_headless}/bin/java $out/bin/freerouter \
-      --add-flags "-Xmx2048m -cp $out/share/java/freerouter.jar router"
+      --add-flags "-Xmx2048m -cp $out/share/java/rtr.jar router"
     popd
     mkdir -p $native/bin
     cp binTmp/*.bin $native/bin

@@ -13,6 +13,8 @@ let
       
       freerouter = super.callPackage ./freerouter {
         openssl = self.openssl_1_1;
+        jdk = self.jdk14;
+        jre_headless = super.callPackage ./jre.nix { jdk = self.jdk14_headless; };
       };
 
       net_snmp = super.net_snmp.overrideAttrs (oldAttrs: rec {
