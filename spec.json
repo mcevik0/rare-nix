@@ -18,7 +18,7 @@
     "release-1alpha": {
         "enabled": 1,
         "hidden": false,
-        "description": "Pre-release of version 1",
+        "description": "1st pre-release of version 1",
         "nixexprinput": "src",
         "nixexprpath": "release.nix",
         "checkinterval": 300,
@@ -34,7 +34,7 @@
     "release-1beta": {
         "enabled": 1,
         "hidden": false,
-        "description": "Pre-release of version 1",
+        "description": "2nd pre-release of version 1",
         "nixexprinput": "src",
         "nixexprpath": "release.nix",
         "checkinterval": 300,
@@ -50,7 +50,7 @@
     "release-1gamma": {
         "enabled": 1,
         "hidden": false,
-        "description": "Pre-release of version 1",
+        "description": "3rd pre-release of version 1",
         "nixexprinput": "src",
         "nixexprpath": "release.nix",
         "checkinterval": 300,
@@ -66,7 +66,7 @@
     "release-1delta": {
         "enabled": 1,
         "hidden": false,
-        "description": "Pre-release of version 1",
+        "description": "4th pre-release of version 1",
         "nixexprinput": "src",
         "nixexprpath": "release.nix",
         "checkinterval": 300,
@@ -76,6 +76,22 @@
         "keepnr": 3,
         "inputs": {
             "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1delta", "emailresponsible": false },
+	    "buildInstaller": { "type": "boolean", "value": "true" }
+        }
+    },
+    "release-1epsilon": {
+        "enabled": 1,
+        "hidden": false,
+        "description": "5th pre-release of version 1",
+        "nixexprinput": "src",
+        "nixexprpath": "release.nix",
+        "checkinterval": 300,
+        "schedulingshares": 100,
+        "enableemail": false,
+        "emailoverride": "",
+        "keepnr": 3,
+        "inputs": {
+            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1epsilon", "emailresponsible": false },
 	    "buildInstaller": { "type": "boolean", "value": "true" }
         }
     }
