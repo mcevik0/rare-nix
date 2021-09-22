@@ -5,8 +5,8 @@
 
 let
   pkgs = import (fetchTarball {
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/v11.tar.gz;
-    sha256 = "01i37jz7ds4mb9xw0xlwc20riby6ys4f03xgn6sh8a5mb2416rn5";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/v12.tar.gz;
+    sha256 = "18hahrbrqccr84i562ficaihq8l9l4mmx5zdvg7188snbwjb0j58";
   }) {
     overlays = import ./overlay;
   };
@@ -24,8 +24,9 @@ let
   versionFile = pkgs.writeTextDir "version" "${version}:${gitTag}\n";
   nixProfile = "/nix/var/nix/profiles/RARE";
 
-  ## v10 supports 9.6.0, but only the reference BSP is available for
-  ## that version.
+  ## Starting with v10, the SDE supports 9.6.0, but only the reference
+  ## BSP is available for for that version.  We stick to 9.5.0 to be
+  ## able to support the other BSPs.
   bf-sde = pkgs.bf-sde.v9_5_0;
   support = bf-sde.support;
 
@@ -88,7 +89,7 @@ let
   onieInstaller = (support.mkOnieInstaller {
     inherit version nixProfile platforms component;
     ## The kernel used here must match that from the profile
-    partialSlice = slice bf-sde.pkgs.kernel-modules.Debian10_9;
+    partialSlice = slice bf-sde.pkgs.kernel-modules.Debian11_0;
     bootstrapProfile = ./onie/profile;
     fileTree = ./onie/files;
     NOS = "${component}-OS";
