@@ -94,5 +94,21 @@
             "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1epsilon", "emailresponsible": false },
 	    "buildInstaller": { "type": "boolean", "value": "true" }
         }
+    },
+    "release-1zeta": {
+        "enabled": 1,
+        "hidden": false,
+        "description": "6th pre-release of version 1",
+        "nixexprinput": "src",
+        "nixexprpath": "release.nix",
+        "checkinterval": 300,
+        "schedulingshares": 100,
+        "enableemail": false,
+        "emailoverride": "",
+        "keepnr": 3,
+        "inputs": {
+            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1zeta", "emailresponsible": false },
+	    "buildInstaller": { "type": "boolean", "value": "true" }
+        }
     }
 }
