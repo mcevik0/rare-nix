@@ -1,4 +1,4 @@
-{ runtimeEnv, moduleWrappers, runCommand, lib, makeWrapper,
+{ runtimeEnv, moduleWrappers, platform, runCommand, lib, makeWrapper,
   buildEnv, inetutils, killall }:
 
 let
@@ -15,6 +15,13 @@ let
     name = "RARE-wrapper-env";
     paths = builtins.attrValues moduleWrappers;
   };
+  ## This platform uses a wrapper to start bf_switchd.
+  daemon = if platform == "stordis_bf2556x_1t"
+    then
+      "salRefApp"
+    else
+      "bf_switchd";
+
 in runCommand "RARE-scripts" {
   buildInputs = [ makeWrapper ];
 } (''
@@ -25,6 +32,7 @@ in runCommand "RARE-scripts" {
 
     substitute ${./start_bfswd.sh} $out/bin/start_bfswd.sh \
       --subst-var-by WRAPPERS ${wrappersEnv} \
+      --subst-var-by DAEMON ${daemon} \
       --replace killall ${killall}/bin/killall
     chmod a+x $out/bin/start_bfswd.sh
 

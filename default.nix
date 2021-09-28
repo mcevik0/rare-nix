@@ -5,8 +5,9 @@
 
 let
   pkgs = import (fetchTarball {
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/v12.tar.gz;
-    sha256 = "18hahrbrqccr84i562ficaihq8l9l4mmx5zdvg7188snbwjb0j58";
+    ## Branch aps-sai
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/91c1cee90c31e94af50fb3b4e7efa21a9d08e1c6.tar.gz;
+    sha256 = "0dapwbxfqp79i4hvsbda6wljkyi1n71k843p8285gc2vqjrir8rb";
   }) {
     overlays = import ./overlay;
   };
@@ -32,7 +33,7 @@ let
 
   fetchBitbucketPrivate = pkgs.callPackage ./fetchbitbucket {};
   sal_modules = pkgs.callPackage ./sal/modules.nix {
-    inherit fetchBitbucketPrivate;
+    inherit fetchBitbucketPrivate bf-sde;
   };
   sliceCommon = (import ./services { inherit pkgs; }) // {
     inherit versionFile;
@@ -68,7 +69,7 @@ let
       moduleWrappers = builtins.mapAttrs
         (_: program: program.moduleWrapper' kernelModules) programs;
       scripts = pkgs.callPackage ./scripts {
-        inherit moduleWrappers;
+        inherit moduleWrappers platform;
         runtimeEnv = bf-sde.runtimeEnvNoBsp;
       };
       freeRtrHwConfig = pkgs.callPackage ./release-manager/rtr-hw.nix {

@@ -1,10 +1,11 @@
 { fetchBitbucketPrivate }:
 
 rec {
-  version = "6c7abf";
+  version = "c240c2";
   src = fetchBitbucketPrivate {
+    ## Branch rare-nix-minimal
     url = "ssh://git@bitbucket.software.geant.org:7999/rare/rare-bf2556x-1t.git";
     rev = "${version}";
-    sha256 = "16z96drd4hmhm2km7l662rz3z7gg1jnqkd272hvjn468yjc0l4n1";
+    sha256 = "1hd21izhxinn3iy0ddy7falb7c2wvpk666p8pbz2ymdikk38wnd6";
   };
 }
