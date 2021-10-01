@@ -116,5 +116,6 @@ in {
   ##   nix-env -f . -p <some-profile-name> -r -i -A install --argstr kernelRelease $(uname -r) --argstr platform <platform>
   install =
     assert kernelRelease != null && platform != null;
+    assert pkgs.lib.assertMsg (builtins.elem platform platforms) "Unsupported platform: ${platform}";
     slice (bf-sde.modulesForKernel kernelRelease) platform;
 }
