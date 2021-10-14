@@ -1,19 +1,19 @@
 { stdenv, fetchFromGitHub, jdk, jre_headless, libpcap,
-  libbsd, openssl, dpdk, numactl, makeWrapper }:
+  libbsd, openssl, dpdk, numactl, zip, makeWrapper }:
 
 stdenv.mkDerivation rec {
   name = "freerouter-${version}";
-  version = "21.04.06";
+  version = "21.10.14";
 
   src = fetchFromGitHub {
     owner = "mc36";
     repo = "freerouter";
-    rev = "6e1607";
-    sha256 = "0mkg62cgz9jmlfwz0vdpk1x6nw99mg25pkj4hwql8zm22bh1dfar";
+    rev = "v${version}";
+    sha256 = "1myrvvxccld74ykxqk03fc4m4996b8br83g7vnbprmpk201ijkj0";
   };
 
   outputs = [ "out" "native" ];
-  buildInputs = [ jdk jre_headless makeWrapper libpcap libbsd openssl dpdk numactl ];
+  buildInputs = [ jdk jre_headless makeWrapper libpcap libbsd openssl dpdk numactl zip ];
 
   NIX_LDFLAGS = "-ldl -lnuma -lrte_telemetry -lrte_mbuf -lrte_kvargs -lrte_eal";
 
@@ -33,7 +33,9 @@ stdenv.mkDerivation rec {
     pushd src
     mkdir -p $out/bin
     mkdir -p $out/share/java
-    jar cf $out/share/java/rtr.jar router.class */*.class
+    sh -e ./cj.sh
+    sh -e ./cp.sh
+    cp rtr.jar $out/share/java/rtr.jar
     makeWrapper ${jre_headless}/bin/java $out/bin/freerouter \
       --add-flags "-Xmx2048m -cp $out/share/java/rtr.jar router"
     popd
