@@ -6,8 +6,8 @@
 let
   pkgs = import (fetchTarball {
     ## Branch aps-sai
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/27682f82dbcf1bbe654dbc96fa0482077ea738b6.tar.gz;
-    sha256 = "1ndj4p6fdfmhfvfc30gpa3id063sbx13qldrjl68qn7dqffzjxqq";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/68bafa8403f2c7d32e42a37961648e2f08c7679d.tar.gz;
+    sha256 = "1ily8v8gk8cwx9sqpl1jqml54mvfyqz7068jqsnrc58in061gd1j";
   }) {
     overlays = import ./overlay;
   };
