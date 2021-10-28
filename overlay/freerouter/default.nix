@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "mc36";
     repo = "freerouter";
-    rev = "v${version}";
+    rev = "1b97df";
     sha256 = "1myrvvxccld74ykxqk03fc4m4996b8br83g7vnbprmpk201ijkj0";
   };
 
