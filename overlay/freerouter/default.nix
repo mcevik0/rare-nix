@@ -3,19 +3,20 @@
 
 stdenv.mkDerivation rec {
   name = "freerouter-${version}";
-  version = "21.10.14";
+  version = "21.11.02";
 
   src = fetchFromGitHub {
     owner = "mc36";
     repo = "freerouter";
-    rev = "1b97df";
-    sha256 = "1myrvvxccld74ykxqk03fc4m4996b8br83g7vnbprmpk201ijkj0";
+    rev = "ac50bdc";
+    sha256 = "14qbxzx1vcji6mwbdqc512q482508gwmmgcwzrkdfjvpky8gf127";
   };
 
   outputs = [ "out" "native" ];
   buildInputs = [ jdk jre_headless makeWrapper libpcap libbsd openssl dpdk numactl zip ];
 
   NIX_LDFLAGS = "-ldl -lnuma -lrte_telemetry -lrte_mbuf -lrte_kvargs -lrte_eal";
+  NIX_CFLAGS_COMPILE = "-Wno-error=format-security";
 
   buildPhase = ''
     set -e
