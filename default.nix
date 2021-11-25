@@ -6,8 +6,8 @@
 let
   pkgs = import (fetchTarball {
     ## Branch aps-sai
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/b217551cdceb1bd1b1658d5e8f2346eca25f894d.tar.gz;
-    sha256 = "0pq1j0j670yng70g4ajva3spxjxq9y1kpd7r8iq7pr8yp2hhaa4i";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/2e9c284cf8dd007bdb18050d78f3a66464fc3734.tar.gz;
+    sha256 = "0sknh9wd00cc2x9g7h1sdr0779ci5fp9i2hyiyxfkd5ziv0qmx66";
   }) {
     overlays = import ./overlay;
   };
@@ -25,10 +25,7 @@ let
   versionFile = pkgs.writeTextDir "version" "${version}:${gitTag}\n";
   nixProfile = "/nix/var/nix/profiles/RARE";
 
-  ## Starting with v10, the SDE supports 9.6.0, but only the reference
-  ## BSP is available for for that version.  We stick to 9.5.0 to be
-  ## able to support the other BSPs.
-  bf-sde = pkgs.bf-sde.v9_5_0;
+  bf-sde = pkgs.bf-sde.latest;
   support = bf-sde.support;
 
   fetchBitbucketPrivate = pkgs.callPackage ./fetchbitbucket {};
@@ -106,7 +103,7 @@ let
         passwordlessSudo = false;
       };
     };
-  }).override { memSize = 6*1024; };
+  }).override { memSize = 7*1024; };
   standaloneInstaller = support.mkStandaloneInstaller {
     inherit release version gitTag nixProfile component;
   };
