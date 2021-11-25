@@ -10,6 +10,7 @@ let
     mpls = [ "-DPROFILE_MPLS" ];
     pppoe = [ "-DPROFILE_PPPOE" ];
     rawip = [ "-DPROFILE_RAWIP" ];
+    pbr = [ "-DPROFILE_PBR" ];
   };
   buildP4 = profile: buildFlags:
     callPackage ./p4.nix {
