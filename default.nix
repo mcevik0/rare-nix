@@ -1,7 +1,33 @@
+{
 ## When called from Hydra via release.nix or from "release-manager
 ## --install-git", we get the result of "git describe" passed in as
 ## gitTag.
-{ gitTag ? "WIP", kernelRelease ? null, platform ? null }:
+  gitTag ? "WIP"
+## kernelRelease and platform are required when building the "install"
+## attribute
+, kernelRelease ? null
+, platform ? null
+
+## A list of binary caches to be included in nix.conf of the image
+## created by the ONIE Installer. It is not required for running the
+## application bundled with the installer. However, it *is* required
+## to install different versions of the application after the initial
+## installation, e.g. with the release-manager.  In that case, the
+## list must include a cache that contains the packages that have been
+## pre-built by a Hydra CI instance (either only the runtime versions
+## or the full version if the "sde-env" development shell needs to be
+## available). The intended use is to specify the list in a Hydra
+## declarative jobset (JSON "spec" file) when building the packages
+## via release.nix.  The list must contain sets of the form
+##   {
+##     url = ...;
+##     key = ...;
+##   }
+## where "url" and "key" must be strings in the format required by the
+## "trusted-substituters" and "trusted-public-keys" Nix options
+## according to nix.conf(5)
+, binaryCaches ? []
+}:
 
 let
   pkgs = import (fetchTarball {
@@ -18,6 +44,7 @@ let
   ##   * create a branch <version>
   ##   * Create a new commit on master
   ##      * Add Hydra CI job for <version> branch to spec.json
+  ##      * Add Hydra CI job for <version> branch to spec-ONIE-SWITCH.json
   ##      * Bump version <version+1>
   ##      * Add release-notes/release-<version+1>
   version = "1theta";
@@ -86,16 +113,12 @@ let
   component = "RARE";
   releaseClosure = support.mkReleaseClosure release component;
   onieInstaller = (support.mkOnieInstaller {
-    inherit version nixProfile platforms component;
+    inherit version nixProfile platforms component binaryCaches;
     ## The kernel used here must match that from the profile
     partialSlice = slice bf-sde.pkgs.kernel-modules.Debian11_0;
     bootstrapProfile = ./onie/profile;
     fileTree = ./onie/files;
     NOS = "${component}-OS";
-    binaryCaches = [ {
-      url = "http://p4.cache.nix.net.switch.ch";
-      key = "p4.cache.nix.net.switch.ch:cR3VMGz/gdZIdBIaUuh42clnVi5OS1McaiJwFTn5X5g=";
-    } ];
     users = {
       rare = {
         useraddArgs = "-s /bin/bash";
