@@ -8,8 +8,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "mc36";
     repo = "freerouter";
-    rev = "ac50bdc";
-    sha256 = "14qbxzx1vcji6mwbdqc512q482508gwmmgcwzrkdfjvpky8gf127";
+    rev = "68b609";
+    sha256 = "0bsswhznsm84nbwzf1kvbjs7wq4fvkl5iawmffxjb69nw6gh0jjh";
   };
 
   outputs = [ "out" "native" ];
@@ -22,7 +22,8 @@ stdenv.mkDerivation rec {
     set -e
     mkdir binTmp
     pushd misc/native
-    substituteInPlace p4dpdk.c --replace '<dpdk/' '<'
+    substituteInPlace p4dpdk.h --replace '<dpdk/' '<'
+    sed -i -e '/CC=\"clang\"/d' c.sh
     sh -e ./c.sh
     popd
     pushd src
