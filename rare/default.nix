@@ -11,6 +11,7 @@ let
     pppoe = [ "-DPROFILE_PPPOE" ];
     rawip = [ "-DPROFILE_RAWIP" ];
     pbr = [ "-DPROFILE_PBR" ];
+    p4lab = [ "-DPROFILE_P4LAB" ];
   };
   buildP4 = profile: buildFlags:
     callPackage ./p4.nix {
