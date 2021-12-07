@@ -1,3 +1,6 @@
 #!/bin/sh
-killall -9 bf_switchd
-@WRAPPERS@/bin/bf_router_$1-module-wrapper
+set -e
+[ $# -eq 1 ]
+profile=$(cat $1)
+@CHECK_PROFILE@
+exec @WRAPPERS@/bin/bf_router_${profile}-module-wrapper

@@ -1,5 +1,6 @@
-{ support, version, nixProfile }:
+{ support, version, nixProfile, defaultProfile }:
 
+assert builtins.hasAttr defaultProfile (import ../rare/profiles.nix);
 support.mkReleaseManager {
   inherit version nixProfile;
   apiType = "bitbucket";
@@ -13,5 +14,6 @@ support.mkReleaseManager {
     cp ${./snmpd.conf} $out/etc/snmp/snmpd.conf
     cp ${./ifindex.init} $out/etc/snmp/ifindex.init
     cp ${./interface.conf} $out/var/lib/snmp/interface.conf
+    echo ${defaultProfile} >$out/etc/freertr/p4-profile
   '';
 }

@@ -1,3 +1,5 @@
+{ platform, scripts }:
+
 { config, pkgs, ... }:
 
 let
@@ -19,6 +21,30 @@ in {
         ExecStopPost = "${maybeReboot}";
         Restart = "on-failure";
         Type = "simple";
+      };
+    };
+    bf-switchd = {
+      description = "bf_switchd process for freerouter";
+      after = [ "freerouter.service" ];
+      requires = [ "freerouter.service" ];
+      serviceConfig = {
+        ExecStart = "${scripts}/bin/start_bfswd.sh /etc/freertr/p4-profile";
+        Type = "simple";
+      };
+      unitConfig = {
+        ConditionFileNotEmpty = "/etc/freertr/p4-profile";
+      };
+    };
+    bf-forwarder = {
+      description = "bf_forwarder process for freerouter";
+      after = [ "bf-switchd.service" ];
+      requires = [ "bf-switchd.service" ];
+      serviceConfig = {
+        ExecStart = "${scripts}/bin/start_bffwd.sh /etc/freertr/p4-profile --no-log-keepalive --platform=${platform} --snmp --ifmibs-dir /var/run/rare-snmp --ifindex /etc/snmp/ifindex ";
+        Type = "simple";
+      };
+      unitConfig = {
+        ConditionFileNotEmpty = "/etc/freertr/p4-profile";
       };
     };
     snabb-snmp-agent = {
