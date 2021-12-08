@@ -1,7 +1,7 @@
-diff -Naur rare.orig/p4src/include/cst_table_size.p4 rare/p4src/include/cst_table_size.p4
---- rare.orig/p4src/include/cst_table_size.p4	2021-10-31 02:48:21.000000000 +0100
-+++ rare/p4src/include/cst_table_size.p4	2021-11-05 14:41:53.120978858 +0100
-@@ -17,6 +17,146 @@
+diff -Naur --no-dereference rare.orig/p4src/include/cst_table_size.p4 rare/p4src/include/cst_table_size.p4
+--- rare.orig/p4src/include/cst_table_size.p4	2021-11-16 09:41:45.000000000 +0100
++++ rare/p4src/include/cst_table_size.p4	2021-12-03 11:34:38.000357565 +0100
+@@ -17,6 +17,171 @@
  #ifndef _TABLE_SIZE_P4_
  #define _TABLE_SIZE_P4_
  
@@ -143,12 +143,37 @@ diff -Naur rare.orig/p4src/include/cst_table_size.p4 rare/p4src/include/cst_tabl
 +#define IPV4_PBRACL_TABLE_SIZE                 512
 +#define IPV6_PBRACL_TABLE_SIZE                 512
 +
++#elif defined PROFILE_P4LAB_1
++
++#define HAVE_MPLS
++#define HAVE_PBR
++#define HAVE_BIER
++#define HAVE_MCAST
++#define HAVE_POLKA
++
++#define IPV4_LPM_TABLE_SIZE                    2048
++#define IPV6_LPM_TABLE_SIZE                    1024
++#define IPV4_MCAST_TABLE_SIZE                  512
++#define IPV6_MCAST_TABLE_SIZE                  512
++#define MPLS_TABLE_SIZE                        1024
++#define POLKA_TABLE_SIZE                       512
++#define NSH_TABLE_SIZE                         512
++#define IPV4_HOST_TABLE_SIZE                   512
++#define IPV6_HOST_TABLE_SIZE                   512
++#define PORT_TABLE_SIZE                        512
++#define MAC_TABLE_SIZE                         512
++#define BUNDLE_TABLE_SIZE                      512
++#define VLAN_TABLE_SIZE                        512
++#define NEXTHOP_TABLE_SIZE                     1024
++#define IPV4_PBRACL_TABLE_SIZE                 512
++#define IPV6_PBRACL_TABLE_SIZE                 512
++
 +#else
 +
  /*
  on routing only profile we can have this
  #define IPV4_LPM_TABLE_SIZE                    34816
-@@ -69,4 +209,6 @@
+@@ -69,4 +234,6 @@
  #define IPV4_FLOWSPEC_TABLE_SIZE               512
  #define IPV6_FLOWSPEC_TABLE_SIZE               512
  
