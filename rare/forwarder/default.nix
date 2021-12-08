@@ -1,4 +1,4 @@
-{ bf-sde, pkgs }:
+{ bf-sde, platform, pkgs }:
 
 let
   repo = import ../repo.nix { inherit (pkgs) fetchgit; };
@@ -17,7 +17,8 @@ in python.pkgs.buildPythonApplication rec {
 
   propagatedBuildInputs = [
     bf-drivers-runtime sal_modules
-  ];
+  ] ++ pkgs.lib.optional (platform == "stordis_bf2556x_1t")
+    bf-sde.pkgs.bf-platforms.aps_bf2556;
 
   preConfigure = ''
     cd bfrt_python

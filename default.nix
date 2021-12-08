@@ -29,7 +29,6 @@ let
 
   sliceCommon = {
     versionFile = pkgs.writeTextDir "version" "${version}:${gitTag}\n";
-    bfForwarder = import rare/forwarder { inherit bf-sde pkgs; };
     release-manager = import ./release-manager {
       inherit support version nixProfile;
       defaultProfile = "p4lab_1";
@@ -53,14 +52,14 @@ let
     let
       sliceFile = pkgs.writeTextDir "slice"
         "${kernelModules.kernelID}:${kernelModules.kernelRelease}:${platform}\n";
+      bfForwarder = import rare/forwarder { inherit bf-sde platform pkgs; };
       programs = import ./rare {
         inherit bf-sde platform pkgs;
       };
       moduleWrappers = builtins.mapAttrs
         (_: program: program.moduleWrapper' kernelModules) programs;
       scripts = pkgs.callPackage ./scripts {
-        inherit moduleWrappers;
-        inherit (sliceCommon) bfForwarder;
+        inherit moduleWrappers bfForwarder;
         runtimeEnv = bf-sde.runtimeEnvNoBsp;
       };
       freeRtrHwConfig = pkgs.callPackage ./release-manager/rtr-hw.nix {
