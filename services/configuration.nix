@@ -29,6 +29,7 @@ in {
       requires = [ "freerouter.service" ];
       serviceConfig = {
         ExecStart = "${scripts}/bin/start_bfswd.sh /etc/freertr/p4-profile";
+        Restart = "on-failure";
         Type = "simple";
       };
       unitConfig = {
@@ -41,6 +42,7 @@ in {
       requires = [ "bf-switchd.service" ];
       serviceConfig = {
         ExecStart = "${scripts}/bin/start_bffwd.sh /etc/freertr/p4-profile --no-log-keepalive --platform=${platform} --snmp --ifmibs-dir /var/run/rare-snmp --ifindex /etc/snmp/ifindex ";
+        Restart = "on-failure";
         Type = "simple";
       };
       unitConfig = {
@@ -54,6 +56,7 @@ in {
       serviceConfig = {
         ExecStart = "${pkgs.SNMPAgent}/bin/interface --ifindex=/etc/snmp/ifindex --shmem-dir=/var/run/rare-snmp";
         ExecStartPre = "+/bin/mkdir -p /var/run/rare-snmp";
+        Restart = "on-failure";
         Type = "simple";
       };
     };
@@ -64,6 +67,7 @@ in {
         ExecStart = "${pkgs.net-snmp}/sbin/snmpd -Lsd -Lf /dev/null -I -smux,mteTrigger,mteTriggerConf -I -ifTable -f -p /run/snmpd.pid -c /etc/snmp/snmpd.conf";
         ExecStartPre = "/bin/mkdir -p /var/run/agentx";
         ExecReload = "/bin/kill -HUP $MAINPID";
+        Restart = "on-failure";
       };
     };
   };
