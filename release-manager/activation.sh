@@ -27,8 +27,11 @@ activate () {
     for file in $IFINDEX $INTERFACE_CONFIG; do
         cp $PROFILE$file $file
     done
-    for config in $CONFIG_SW $CONFIG_HW $P4_PROFILE $SNMPD_CONFIG; do
+    for config in $CONFIG_SW $P4_PROFILE $SNMPD_CONFIG; do
         [ -e $config ] || cp $PROFILE$config $config
+    done
+    for config in $CONFIG_HW; do
+	ln -fs $PROFILE$config $config
     done
     if [ ! -e $SHELL_PROFILE ]; then
         echo PATH=$PROFILE/bin:\$PATH >$SHELL_PROFILE
@@ -47,6 +50,8 @@ deactivate () {
     for service in $PROFILE/$SYSTEMD_DIR/*.service; do
         systemctl disable $(basename $service) || true
     done
+    INFO "Removing $CONFIG_HW"
+    rm -f $CONFIG_HW
     INFO "Unloading kernel modules"
     for module in $(lsmod | awk '{print $1}'); do
         [[ $module =~ bf_ ]] && rmmod $module || true

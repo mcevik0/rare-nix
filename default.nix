@@ -66,7 +66,8 @@ let
         runtimeEnv = bf-sde.runtimeEnvNoBsp;
       };
       freeRtrHwConfig = pkgs.callPackage ./release-manager/rtr-hw.nix {
-        inherit platform nixProfile;
+        inherit platform scripts;
+        inherit (pkgs) freerouter;
       };
     in (import ./services { inherit pkgs platform scripts; }) //
        sliceCommon // moduleWrappers // {
