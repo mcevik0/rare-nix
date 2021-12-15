@@ -50,8 +50,17 @@ deactivate () {
     for service in $PROFILE/$SYSTEMD_DIR/*.service; do
         systemctl disable $(basename $service) || true
     done
-    INFO "Removing $CONFIG_HW"
-    rm -f $CONFIG_HW
+    if [ -e $CONFIG_HW ]; then
+	if [ "$(printf $(md5sum $CONFIG_HW))" == "$(printf $(md5sum $PROFILE$CONFIG_HW))" ]; then
+	    INFO "Removing $CONFIG_HW"
+	    rm -f $CONFIG_HW
+	else
+	    hash=$(md5sum $CONFIG_HW)
+	    save=${CONFIG_HW}.${hash:1:6}
+	    INFO "$CONFIG_HW was modified after installation, keeping it as $save"
+	    mv $CONFIG_HW $save
+	fi
+    fi
     INFO "Unloading kernel modules"
     for module in $(lsmod | awk '{print $1}'); do
         [[ $module =~ bf_ ]] && rmmod $module || true
