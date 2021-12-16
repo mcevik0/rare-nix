@@ -23,10 +23,7 @@ let
   version = "1eta";
   nixProfile = "/nix/var/nix/profiles/RARE";
 
-  ## Starting with v10, the SDE supports 9.6.0, but only the reference
-  ## BSP is available for for that version.  We stick to 9.5.0 to be
-  ## able to support the other BSPs.
-  bf-sde = pkgs.bf-sde.v9_5_0;
+  bf-sde = pkgs.bf-sde.latest;
   support = bf-sde.support;
 
   sliceCommon = {
