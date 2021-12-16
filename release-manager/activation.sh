@@ -27,8 +27,11 @@ activate () {
     for file in $IFINDEX $INTERFACE_CONFIG; do
         cp $PROFILE$file $file
     done
-    for config in $CONFIG_SW $CONFIG_HW $P4_PROFILE $SNMPD_CONFIG; do
+    for config in $CONFIG_SW $P4_PROFILE $SNMPD_CONFIG; do
         [ -e $config ] || cp $PROFILE$config $config
+    done
+    for config in $CONFIG_HW; do
+	ln -fs $PROFILE$config $config
     done
     if [ ! -e $SHELL_PROFILE ]; then
         echo PATH=$PROFILE/bin:\$PATH >$SHELL_PROFILE
@@ -47,6 +50,17 @@ deactivate () {
     for service in $PROFILE/$SYSTEMD_DIR/*.service; do
         systemctl disable $(basename $service) || true
     done
+    if [ -e $CONFIG_HW ]; then
+	if [ "$(printf $(md5sum $CONFIG_HW))" == "$(printf $(md5sum $PROFILE$CONFIG_HW))" ]; then
+	    INFO "Removing $CONFIG_HW"
+	    rm -f $CONFIG_HW
+	else
+	    hash=$(md5sum $CONFIG_HW)
+	    save=${CONFIG_HW}.${hash:1:6}
+	    INFO "$CONFIG_HW was modified after installation, keeping it as $save"
+	    mv $CONFIG_HW $save
+	fi
+    fi
     INFO "Unloading kernel modules"
     for module in $(lsmod | awk '{print $1}'); do
         [[ $module =~ bf_ ]] && rmmod $module || true

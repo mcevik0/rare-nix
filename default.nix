@@ -5,9 +5,8 @@
 
 let
   pkgs = import (fetchTarball {
-    ## Branch aps-sai
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/2e9c284cf8dd007bdb18050d78f3a66464fc3734.tar.gz;
-    sha256 = "0sknh9wd00cc2x9g7h1sdr0779ci5fp9i2hyiyxfkd5ziv0qmx66";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/v14.tar.gz;
+    sha256 = "07mh13pl4bxj3xpgar6zbxiqz89vjrmjj48r730h3j9v46nszxyx";
   }) {
     overlays = import ./overlay;
   };
@@ -63,7 +62,8 @@ let
         runtimeEnv = bf-sde.runtimeEnvNoBsp;
       };
       freeRtrHwConfig = pkgs.callPackage ./release-manager/rtr-hw.nix {
-        inherit platform nixProfile;
+        inherit platform scripts;
+        inherit (pkgs) freerouter;
       };
     in (import ./services { inherit pkgs platform scripts; }) //
        sliceCommon // moduleWrappers // {
