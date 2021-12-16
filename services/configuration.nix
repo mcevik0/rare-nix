@@ -1,4 +1,4 @@
-{ platform, scripts }:
+{ bf-sde, platform, scripts }:
 
 { config, pkgs, ... }:
 
@@ -10,6 +10,8 @@ let
     fi
     exit 0
   '';
+  forwarderExtraArgs = pkgs.lib.optionalString (platform == "stordis_bf2556x_1t")
+    "--sal-grpc-server-address=127.0.0.1:${bf-sde.pkgs.bf-platforms.aps_bf2556.salRefApp.salGrpcPort}";
 in {
   systemd.services = {
     freerouter = {
@@ -41,7 +43,7 @@ in {
       after = [ "bf-switchd.service" ];
       requires = [ "bf-switchd.service" ];
       serviceConfig = {
-        ExecStart = "${scripts}/bin/start_bffwd.sh /etc/freertr/p4-profile --no-log-keepalive --platform=${platform} --snmp --ifmibs-dir /var/run/rare-snmp --ifindex /etc/snmp/ifindex ";
+        ExecStart = "${scripts}/bin/start_bffwd.sh /etc/freertr/p4-profile --no-log-keepalive --platform=${platform} --snmp --ifmibs-dir /var/run/rare-snmp --ifindex /etc/snmp/ifindex " + forwarderExtraArgs;
         Restart = "on-failure";
         Type = "simple";
       };

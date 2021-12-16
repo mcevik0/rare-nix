@@ -1,9 +1,9 @@
-{ pkgs, platform, scripts }:
+{ pkgs, bf-sde, platform, scripts }:
 
 let
   eval = import (pkgs.path + "/nixos/lib/eval-config.nix") {
     inherit pkgs;
-    modules = [ (import ./configuration.nix { inherit platform scripts; }) ];
+    modules = [ (import ./configuration.nix { inherit bf-sde platform scripts; }) ];
   };
   units = eval.config.systemd.units;
 

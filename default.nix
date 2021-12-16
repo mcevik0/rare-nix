@@ -65,7 +65,7 @@ let
         inherit platform scripts;
         inherit (pkgs) freerouter;
       };
-    in (import ./services { inherit pkgs platform scripts; }) //
+    in (import ./services { inherit pkgs bf-sde platform scripts; }) //
        sliceCommon // moduleWrappers // {
          inherit sliceFile scripts freeRtrHwConfig kernelModules;
        };
