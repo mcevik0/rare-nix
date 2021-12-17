@@ -30,6 +30,10 @@ in {
       after = [ "freerouter.service" ];
       requires = [ "freerouter.service" ];
       serviceConfig = {
+        ## bf_switchd writes two log files (bf_drivers.log and
+        ## zlog-cfg-cur) to its working directory. We simply start the
+        ## daemon from /var/log to have those files created there.
+        WorkingDirectory = "/var/log";
         ExecStart = "${scripts}/bin/start_bfswd.sh /etc/freertr/p4-profile";
         Restart = "on-failure";
         Type = "simple";
