@@ -20,7 +20,7 @@ let
   ##      * Add Hydra CI job for <version> branch to spec.json
   ##      * Bump version <version+1>
   ##      * Add release-notes/release-<version+1>
-  version = "1eta";
+  version = "1theta";
   nixProfile = "/nix/var/nix/profiles/RARE";
 
   bf-sde = pkgs.bf-sde.latest;
