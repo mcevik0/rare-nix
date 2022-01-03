@@ -1,19 +1,20 @@
-{ stdenv, fetchFromGitHub, jdk, jre_headless, libpcap,
-  libbsd, openssl, dpdk, numactl, zip, makeWrapper }:
+{ clangStdenv, fetchFromGitHub, jdk, jre_headless, libpcap,
+  libbpf, libbsd, openssl, dpdk, numactl, zip, makeWrapper }:
 
-stdenv.mkDerivation rec {
+clangStdenv.mkDerivation rec {
   name = "freerouter-${version}";
-  version = "21.12.02";
+  version = "22.1.3";
 
   src = fetchFromGitHub {
     owner = "mc36";
     repo = "freerouter";
-    rev = "812ea9";
-    sha256 = "17gxs7jb9s0rcid6nq4y5pijnkggy2c3nlyww52xa0p08sw1syhd";
+    rev = "b62662";
+    sha256 = "0kxrf9s8g3hacl12jwmp64x576w5jx46ahrnnl72s4cl3f6ic34g";
   };
 
   outputs = [ "out" "native" ];
-  buildInputs = [ jdk jre_headless makeWrapper libpcap libbsd openssl dpdk numactl zip ];
+  buildInputs = [ jdk jre_headless makeWrapper libpcap libbpf libbsd openssl dpdk numactl zip ];
+  patches = [ ./p4xdp_kern.c.patch ];
 
   NIX_LDFLAGS = "-ldl -lnuma -lrte_telemetry -lrte_mbuf -lrte_kvargs -lrte_eal";
   NIX_CFLAGS_COMPILE = "-Wno-error=format-security";
@@ -23,11 +24,7 @@ stdenv.mkDerivation rec {
     mkdir binTmp
     pushd misc/native
     substituteInPlace p4dpdk.h --replace '<dpdk/' '<'
-    sed -i -e '/CC=\"clang\"/d' c.sh
     sh -e ./c.sh
-    popd
-    pushd src
-    javac router.java
     popd
   '';
 
@@ -39,7 +36,7 @@ stdenv.mkDerivation rec {
     sh -e ./cp.sh
     cp rtr.jar $out/share/java/rtr.jar
     makeWrapper ${jre_headless}/bin/java $out/bin/freerouter \
-      --add-flags "-Xmx2048m -cp $out/share/java/rtr.jar router"
+      --add-flags "-Xmx2048m -cp $out/share/java/rtr.jar net.freertr.router"
     popd
     mkdir -p $native/bin
     cp binTmp/*.bin $native/bin

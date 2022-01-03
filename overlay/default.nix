@@ -10,7 +10,20 @@ let
           sha256 = "0rbmaybvk0khhmmp47mvhq8jq7gjmrrp1brxzn8k180a20m6pxvh";
         };
       });
-      
+
+      ## The original version of libbpf in our nixpkgs expression is
+      ## missing the dependency on the libz shared object.
+      libbpf = super.libbpf.overrideAttrs (oldAttrs: rec {
+        version = "0.6.1";
+        src = self.fetchFromGitHub {
+          owner  = "libbpf";
+          repo   = "libbpf";
+          rev    = "v${version}";
+          sha256 = "114rw5f6kv209bpcmc99hvk24053jdq37g1wbaxqg8nzb5zczhpw";
+        };
+        patchPhase = "";
+      });
+
       freerouter = super.callPackage ./freerouter {
         openssl = self.openssl_1_1;
         jdk = self.jdk14;
