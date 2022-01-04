@@ -1,8 +1,0 @@
-diff -Naur freeRouter.orig/misc/native/p4xdp_kern.c freeRouter/misc/native/p4xdp_kern.c
---- freeRouter.orig/misc/native/p4xdp_kern.c	2022-01-03 14:15:53.824872155 +0100
-+++ freeRouter/misc/native/p4xdp_kern.c	2022-01-03 14:23:36.040867429 +0100
-@@ -1,3 +1,4 @@
-+#include <stddef.h>
- #include <linux/bpf.h>
- #include <bpf/bpf_helpers.h>
- #include "utils.h"

@@ -14,7 +14,6 @@ clangStdenv.mkDerivation rec {
 
   outputs = [ "out" "native" ];
   buildInputs = [ jdk jre_headless makeWrapper libpcap libbpf libbsd openssl dpdk numactl zip ];
-  patches = [ ./p4xdp_kern.c.patch ];
 
   NIX_LDFLAGS = "-ldl -lnuma -lrte_telemetry -lrte_mbuf -lrte_kvargs -lrte_eal";
   NIX_CFLAGS_COMPILE = "-Wno-error=format-security";
