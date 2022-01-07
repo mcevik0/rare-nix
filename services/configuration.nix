@@ -35,6 +35,12 @@ in {
         ## daemon from /var/log to have those files created there.
         WorkingDirectory = "/var/log";
         ExecStart = "${scripts}/bin/start_bfswd.sh /etc/freertr/p4-profile";
+        ## Set the MTU of the CPU PCIe port to its maximum. The device
+        ## is created by the bf_kpkt kernel module, which is loaded by
+        ## the kernel module wrapper script. ExecStartPost is executed
+        ## after the main daemon has been forked so we must be
+        ## prepared to wait until the device becomes visible.
+        ExecStartPost = ''bash -c "while ! ${pkgs.inetutils}/bin/ifconfig bf_pci0 >/dev/null 2>&1; do echo \"Waiting for bf_pci0\"; sleep 1; done; echo \"Setting MTU of bf_pci0 to 9710\";${pkgs.inetutils}/bin/ifconfig bf_pci0 mtu 9710"'';
         Restart = "on-failure";
         Type = "simple";
       };
