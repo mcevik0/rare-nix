@@ -25,7 +25,8 @@
 ## bf_forwarder.py.
 {
   bier = {
-    buildFlags = [ "-DPROFILE_BIER" ];
+    ## See Issue P4C-3974 in 9.7.1 release notes
+    buildFlags = [ ''-DPROFILE_BIER -Xp4c="--disable-parse-depth-limit"'' ] ;
   };
   gre = {
     buildFlags = [ "-DPROFILE_GRE" ];

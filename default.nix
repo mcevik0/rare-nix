@@ -5,8 +5,8 @@
 
 let
   pkgs = import (fetchTarball {
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/v14.tar.gz;
-    sha256 = "0j96zc1kydvr1is70dy9xc0597dx8ggl6yzal76mcsniavw624s5";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/9d16c487c3d5a477522dc50a324b52fd1682d272.tar.gz;
+    sha256 = "00rqhakbjmxnwwmjbprda2ng3w0d56kmysprvhi8ylxwlxysvm74";
   }) {
     overlays = import ./overlay;
   };
@@ -23,7 +23,7 @@ let
   version = "1theta";
   nixProfile = "/nix/var/nix/profiles/RARE";
 
-  bf-sde = pkgs.bf-sde.latest;
+  bf-sde = pkgs.bf-sde.v9_7_1;
   support = bf-sde.support;
 
   sliceCommon = {
