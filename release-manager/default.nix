@@ -1,6 +1,6 @@
-{ support, version, nixProfile, defaultProfile }:
+{ support, version, nixProfile, p4Profiles, defaultProfile }:
 
-assert builtins.hasAttr defaultProfile (import ../rare/profiles.nix);
+assert builtins.hasAttr defaultProfile p4Profiles;
 support.mkReleaseManager {
   inherit version nixProfile;
   apiType = "bitbucket";

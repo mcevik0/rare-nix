@@ -3,13 +3,13 @@
 
 clangStdenv.mkDerivation rec {
   name = "freerouter-${version}";
-  version = "22.1.3";
+  version = "22.2.14";
 
   src = fetchFromGitHub {
     owner = "mc36";
     repo = "freerouter";
-    rev = "b62662";
-    sha256 = "0kxrf9s8g3hacl12jwmp64x576w5jx46ahrnnl72s4cl3f6ic34g";
+    rev = "a6069f";
+    sha256 = "0h3jsmnlyxrzdld8nfb9ag9zr29z6h3qdbzfh6hkid7a8gk54cgx";
   };
 
   outputs = [ "out" "native" ];

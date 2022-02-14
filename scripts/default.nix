@@ -1,5 +1,5 @@
-{ runtimeEnv, moduleWrappers, bfForwarder, runCommand, lib,
-  makeWrapper, buildEnv, inetutils }:
+{ runtimeEnv, moduleWrappers, bfForwarder, p4Profiles, runCommand,
+  lib, makeWrapper, buildEnv, inetutils }:
 
 let
   bfshScripts = [ "sh_tna_ports" "sh_tna_temp" ];
@@ -21,9 +21,8 @@ let
 
   ## Create wrappers for bf_forwarder.py that use a profile-dependent
   ## set of arguments and collect all wrappers in an environment.
-  profiles = import ../rare/profiles.nix;
-  profileNames = builtins.attrNames profiles;
-  profilesWithForwarderFlags = lib.filterAttrs (n: v: v ? bffwdFlags) profiles;
+  profileNames = builtins.attrNames p4Profiles;
+  profilesWithForwarderFlags = lib.filterAttrs (n: v: v ? bffwdFlags) p4Profiles;
   mkFwdWrapper = profile: flags:
     runCommand "bf-forwarder-${profile}" {
       inherit (flags) bffwdFlags;

@@ -26,11 +26,16 @@ let
   bf-sde = pkgs.bf-sde.v9_7_1;
   support = bf-sde.support;
 
+  p4Profiles = import rare/p4-profiles.nix {
+    inherit (pkgs) lib;
+    inherit bf-sde;
+  };
+
   sliceCommon = {
     versionFile = pkgs.writeTextDir "version" "${version}:${gitTag}\n";
     release-manager = import ./release-manager {
-      inherit support version nixProfile;
-      defaultProfile = "p4lab_1";
+      inherit support version nixProfile p4Profiles;
+      defaultProfile = "PE";
     };
     inherit (pkgs) freerouter;
 
@@ -53,12 +58,12 @@ let
         "${kernelModules.kernelID}:${kernelModules.kernelRelease}:${platform}\n";
       bfForwarder = import rare/forwarder { inherit bf-sde platform pkgs; };
       programs = import ./rare {
-        inherit bf-sde platform pkgs;
+        inherit bf-sde platform p4Profiles pkgs;
       };
       moduleWrappers = builtins.mapAttrs
         (_: program: program.moduleWrapper' kernelModules) programs;
       scripts = pkgs.callPackage ./scripts {
-        inherit moduleWrappers bfForwarder;
+        inherit moduleWrappers bfForwarder p4Profiles;
         runtimeEnv = bf-sde.runtimeEnvNoBsp;
       };
       freeRtrHwConfig = pkgs.callPackage ./release-manager/rtr-hw.nix {

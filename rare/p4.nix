@@ -12,7 +12,6 @@ in bf-sde.buildP4Program {
   path = "p4src";
   execName = "bf_router_${profile}";
 
-  buildFlags = [ "-I${repo.src}/p4src" ] ++ buildFlags;
+  buildFlags = [ "-I${repo.src}/p4src -I${repo.src}/profiles" ] ++ buildFlags;
   requiredKernelModule = "bf_kpkt";
-  patches = [ ./profiles.patch ];
 }
