@@ -1,8 +1,9 @@
 { clangStdenv, fetchFromGitHub, jdk, jre_headless, libpcap,
-  libbpf, libbsd, openssl, dpdk, numactl, zip, makeWrapper }:
+  libbpf, libbsd, openssl, dpdk, numactl, zip, makeWrapper,
+  lib, iproute }:
 
 clangStdenv.mkDerivation rec {
-  name = "freerouter-${version}";
+  pname = "freerouter";
   version = "22.2.14";
 
   src = fetchFromGitHub {
@@ -20,6 +21,12 @@ clangStdenv.mkDerivation rec {
 
   buildPhase = ''
     set -e
+
+    pushd src
+    sh -e ./cj.sh
+    sh -e ./cp.sh
+    popd
+
     mkdir binTmp
     pushd misc/native
     substituteInPlace p4dpdk.h --replace '<dpdk/' '<'
@@ -28,17 +35,16 @@ clangStdenv.mkDerivation rec {
   '';
 
   installPhase = ''
-    pushd src
     mkdir -p $out/bin
     mkdir -p $out/share/java
-    sh -e ./cj.sh
-    sh -e ./cp.sh
-    cp rtr.jar $out/share/java/rtr.jar
+    cp src/rtr.jar $out/share/java/rtr.jar
     makeWrapper ${jre_headless}/bin/java $out/bin/freerouter \
       --add-flags "-Xmx2048m -cp $out/share/java/rtr.jar net.freertr.router"
-    popd
+
     mkdir -p $native/bin
     cp binTmp/*.bin $native/bin
+    wrapProgram $native/bin/tapInt.bin \
+      --set PATH "${lib.strings.makeBinPath [ iproute ]}"
   '';
 
 }
