@@ -1,5 +1,3 @@
-{ bf-sde, platform, scripts }:
-
 { config, pkgs, ... }:
 
 let
@@ -10,8 +8,6 @@ let
     fi
     exit 0
   '';
-  forwarderExtraArgs = pkgs.lib.optionalString (platform == "stordis_bf2556x_1t")
-    "--sal-grpc-server-address=127.0.0.1:${bf-sde.pkgs.bf-platforms.aps_bf2556.salRefApp.salGrpcPort}";
 in {
   systemd.services = {
     freerouter = {
@@ -19,46 +15,10 @@ in {
       after = [ "networking.service" ];
       requires = [ "networking.service" ];
       serviceConfig = {
-        ExecStart = "${pkgs.freerouter}/bin/freerouter router /etc/freertr/rtr-";
+        ExecStart = "${pkgs.freerouter}/bin/freerouter routerc /etc/freertr/rtr-";
         ExecStopPost = "${maybeReboot}";
         Restart = "on-failure";
         Type = "simple";
-      };
-    };
-    bf-switchd = {
-      description = "bf_switchd process for freerouter";
-      after = [ "freerouter.service" ];
-      requires = [ "freerouter.service" ];
-      serviceConfig = {
-        ## bf_switchd writes two log files (bf_drivers.log and
-        ## zlog-cfg-cur) to its working directory. We simply start the
-        ## daemon from /var/log to have those files created there.
-        WorkingDirectory = "/var/log";
-        ExecStart = "${scripts}/bin/start_bfswd.sh /etc/freertr/p4-profile";
-        ## Set the MTU of the CPU PCIe port to its maximum. The device
-        ## is created by the bf_kpkt kernel module, which is loaded by
-        ## the kernel module wrapper script. ExecStartPost is executed
-        ## after the main daemon has been forked so we must be
-        ## prepared to wait until the device becomes visible.
-        ExecStartPost = ''bash -c "while ! ${pkgs.inetutils}/bin/ifconfig bf_pci0 >/dev/null 2>&1; do echo \"Waiting for bf_pci0\"; sleep 1; done; echo \"Setting MTU of bf_pci0 to 9710\";${pkgs.inetutils}/bin/ifconfig bf_pci0 mtu 9710"'';
-        Restart = "on-failure";
-        Type = "simple";
-      };
-      unitConfig = {
-        ConditionFileNotEmpty = "/etc/freertr/p4-profile";
-      };
-    };
-    bf-forwarder = {
-      description = "bf_forwarder process for freerouter";
-      after = [ "bf-switchd.service" ];
-      requires = [ "bf-switchd.service" ];
-      serviceConfig = {
-        ExecStart = "${scripts}/bin/start_bffwd.sh /etc/freertr/p4-profile --no-log-keepalive --platform=${platform} --snmp --ifmibs-dir /var/run/rare-snmp --ifindex /etc/snmp/ifindex " + forwarderExtraArgs;
-        Restart = "on-failure";
-        Type = "simple";
-      };
-      unitConfig = {
-        ConditionFileNotEmpty = "/etc/freertr/p4-profile";
       };
     };
     snabb-snmp-agent = {

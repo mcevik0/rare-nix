@@ -8,8 +8,8 @@ clangStdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "mc36";
     repo = "freerouter";
-    rev = "a6069f";
-    sha256 = "0h3jsmnlyxrzdld8nfb9ag9zr29z6h3qdbzfh6hkid7a8gk54cgx";
+    rev = "f91e7f";
+    sha256 = "1v1kviqpq62wh66r3zc5pcmb0j4w45najrcb4qa83cwzlpzd1saq";
   };
 
   outputs = [ "out" "native" ];

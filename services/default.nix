@@ -3,7 +3,7 @@
 let
   eval = import (pkgs.path + "/nixos/lib/eval-config.nix") {
     inherit pkgs;
-    modules = [ (import ./configuration.nix { inherit bf-sde platform scripts; }) ];
+    modules = [ ./configuration.nix ];
   };
   units = eval.config.systemd.units;
 
@@ -26,8 +26,6 @@ let
     '';
 in {
   freerouter-service = addWantedBy "freerouter.service" "multi-user.target";
-  bf-switchd-service = addWantedBy "bf-switchd.service" "freerouter.service";
-  bf-forwarder-service = addWantedBy "bf-forwarder.service" "bf-switchd.service";
   snabb-snmp-agent-service = addWantedBy "snabb-snmp-agent.service" "snmpd.service";
   snmpd-service = addWantedBy "snmpd.service" "multi-user.target";
 }
