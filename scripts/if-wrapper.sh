@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 if=$1
 shift
 
@@ -11,6 +9,7 @@ while ! ifconfig $if >/dev/null 2>&1; do
     echo "Waiting for $if to become ready"
     sleep 1
 done
+echo "Interface $if is ready"
 ifconfig $if up
 ifconfig $if mtu 9710
 ifconfig $if promisc

@@ -1,5 +1,5 @@
 { runtimeEnv, moduleWrappers, bfForwarder, p4Profiles, runCommand,
-  lib, makeWrapper, buildEnv, inetutils }:
+  lib, makeWrapper, buildEnv, inetutils, coreutils }:
 
 let
   bfshScripts = [ "sh_tna_ports" "sh_tna_temp" ];
@@ -73,7 +73,7 @@ in runCommand "RARE-scripts" {
 
     cp ${./if-wrapper.sh} $out/bin/if-wrapper.sh
     wrapProgram $out/bin/if-wrapper.sh \
-      --set PATH "${lib.strings.makeBinPath [ inetutils ]}"
+      --set PATH "${lib.strings.makeBinPath [ inetutils coreutils ]}"
     chmod a+x $out/bin/if-wrapper.sh
 
     patchShebangs $out/bin
