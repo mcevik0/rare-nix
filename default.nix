@@ -37,14 +37,14 @@ let
       inherit support version nixProfile p4Profiles;
       defaultProfile = "PE";
     };
-    inherit (pkgs) freerouter;
+    inherit (pkgs) freerouter freerouter-native;
 
     ## nix-env does not handle multi-output derivations correctly. We
     ## work around this by wrapping those derivations in an
     ## environment.
     auxEnv = pkgs.buildEnv {
       name = "aux-env";
-      paths = [ bf-sde.pkgs.bf-utils pkgs.freerouter.native ];
+      paths = [ bf-sde.pkgs.bf-utils ];
     };
   };
 
@@ -68,7 +68,7 @@ let
       };
       freeRtrHwConfig = pkgs.callPackage ./release-manager/rtr-hw.nix {
         inherit bf-sde platform scripts;
-        inherit (pkgs) freerouter;
+        inherit (pkgs) freerouter-native;
       };
     in (import ./services { inherit pkgs bf-sde platform scripts; }) //
        sliceCommon // moduleWrappers // {

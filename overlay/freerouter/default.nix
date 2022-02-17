@@ -1,50 +1,27 @@
-{ clangStdenv, fetchFromGitHub, jdk, jre_headless, libpcap,
-  libbpf, libbsd, openssl, dpdk, numactl, zip, makeWrapper,
-  lib, iproute }:
+{ stdenv, jdk, makeWrapper, callPackage, runCommand, freerouter-jar }:
 
-clangStdenv.mkDerivation rec {
-  pname = "freerouter";
-  version = "22.2.14";
-
-  src = fetchFromGitHub {
-    owner = "mc36";
-    repo = "freerouter";
-    rev = "f91e7f";
-    sha256 = "1v1kviqpq62wh66r3zc5pcmb0j4w45najrcb4qa83cwzlpzd1saq";
+let
+  modules = import (runCommand "freerouter-java-modules" {} ''
+    IFS=,
+    for dep in $(${jdk}/bin/jdeps --print-module-deps ${freerouter-jar}/rtr.jar); do
+      deps="$deps \"$dep\""
+    done
+    echo "[ $deps ]">$out
+  '');
+  jre_headless = callPackage ../jre.nix {
+    inherit jdk modules;
   };
+in stdenv.mkDerivation {
+  pname = "freerouter";
+  inherit (freerouter-jar) version;
+  src = null;
+  phases = [ "installPhase" ];
 
-  outputs = [ "out" "native" ];
-  buildInputs = [ jdk jre_headless makeWrapper libpcap libbpf libbsd openssl dpdk numactl zip ];
-
-  NIX_LDFLAGS = "-ldl -lnuma -lrte_telemetry -lrte_mbuf -lrte_kvargs -lrte_eal";
-  NIX_CFLAGS_COMPILE = "-Wno-error=format-security";
-
-  buildPhase = ''
-    set -e
-
-    pushd src
-    sh -e ./cj.sh
-    sh -e ./cp.sh
-    popd
-
-    mkdir binTmp
-    pushd misc/native
-    substituteInPlace p4dpdk.h --replace '<dpdk/' '<'
-    sh -e ./c.sh
-    popd
-  '';
-
+  buildInputs = [ makeWrapper ];
+  buildPhase = "true";
   installPhase = ''
     mkdir -p $out/bin
-    mkdir -p $out/share/java
-    cp src/rtr.jar $out/share/java/rtr.jar
     makeWrapper ${jre_headless}/bin/java $out/bin/freerouter \
-      --add-flags "-Xmx2048m -cp $out/share/java/rtr.jar net.freertr.router"
-
-    mkdir -p $native/bin
-    cp binTmp/*.bin $native/bin
-    wrapProgram $native/bin/tapInt.bin \
-      --set PATH "${lib.strings.makeBinPath [ iproute ]}"
+      --add-flags "-Xmx2048m -jar ${freerouter-jar}/rtr.jar"
   '';
-
 }

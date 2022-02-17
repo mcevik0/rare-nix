@@ -24,10 +24,11 @@ let
         patchPhase = "";
       });
 
-      freerouter = super.callPackage ./freerouter {
+      jdk = self.jdk14;
+      freerouter-jar = super.callPackage freerouter/jar.nix {};
+      freerouter = super.callPackage ./freerouter {};
+      freerouter-native = super.callPackage ./freerouter/native.nix {
         openssl = self.openssl_1_1;
-        jdk = self.jdk14;
-        jre_headless = super.callPackage ./jre.nix { jdk = self.jdk14_headless; };
       };
 
       net_snmp = super.net_snmp.overrideAttrs (oldAttrs: rec {
