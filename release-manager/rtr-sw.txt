@@ -5,15 +5,6 @@ logging buffered debug 10240
 logging file debug /var/log/freertr.log
 logging rotate 655360000 /var/log/freertr.old
 !
-process definition bfswd
-  log-console
-  log-collect 200
-  exit
-!
-process definition bffwd
-  log-console
-  log-collect 200
-  exit
 !
 crypto rsakey rsa generate 2048
 !
