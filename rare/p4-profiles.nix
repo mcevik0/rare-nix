@@ -42,6 +42,7 @@ let
     "SRV6"
     "TOR"
     "WLC"
+    "GGSN"
   ];
   profileFlags =
     lib.genAttrs profiles (profile: [ "-DPROFILE_${profile}" ]);
