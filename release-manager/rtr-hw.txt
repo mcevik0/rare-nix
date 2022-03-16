@@ -13,10 +13,6 @@ prcpar mgmteth con
 proc linport @FREERTR_NATIVE@/bin/tapInt.bin tapnet 20006 127.0.0.1 20005 127.0.0.1 10.255.255.1/24 10.255.255.254
 prcpar linport con
 proc bfswd @SCRIPTS@/bin/start_bfswd.sh /etc/freertr/p4-profile /var/log
-prcpar bfswd con
-prcpar bfswd act
-prcpar bfswd col 200
+prcpar bfswd act col 500
 proc bffwd @SCRIPTS@/bin/start_bffwd.sh /etc/freertr/p4-profile --no-log-keepalive --platform=@PLATFORM@ --snmp --ifmibs-dir /var/run/rare-snmp --ifindex /etc/snmp/ifindex @BFFWD_EXTRA_ARGS@
-prcpar bffwd con
-prcpar bffwd act
-prcpar bffwd col 200
+prcpar bffwd act col 500
