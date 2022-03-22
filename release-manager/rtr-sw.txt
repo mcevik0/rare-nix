@@ -59,7 +59,7 @@ interface ethernet1
  ipv4 dhcp-client early
  ipv6 address dynamic dynamic
  ipv6 gateway-prefix all6
- ipv6 slaac
+ ipv6 slaac enable
  ipv6 prefix-suppress
  no shutdown
  no log-link-change
