@@ -102,7 +102,7 @@ let
         passwordlessSudo = false;
       };
     };
-  }).override { memSize = 7*1024; };
+  }).override { memSize = 8*1024; };
   standaloneInstaller = support.mkStandaloneInstaller {
     inherit release version gitTag nixProfile component;
   };
