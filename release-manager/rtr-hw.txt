@@ -6,9 +6,9 @@ tcp2vrf 9080 p4 9080
 int eth0 eth 0000.0bad.c0de 127.0.0.1 20001 127.0.0.1 20002
 int eth1 eth 0000.0bad.c0de 127.0.0.1 20003 127.0.0.1 20004
 int eth2 eth 0000.0bad.c0de 127.0.0.1 20005 127.0.0.1 20006
-proc cpuport @SCRIPTS@/bin/if-wrapper.sh bf_pci0 @FREERTR_NATIVE@/bin/pcapInt.bin bf_pci0 20002 127.0.0.1 20001 127.0.0.1
+proc cpuport @SCRIPTS@/bin/if-wrapper.sh bf_pci0 @SCRIPTS@/bin/pcapInt-wrapper.sh bf_pci0 20002 127.0.0.1 20001 127.0.0.1
 prcpar cpuport con
-proc mgmteth @FREERTR_NATIVE@/bin/pcapInt.bin mgmt0 20004 127.0.0.1 20003 127.0.0.1
+proc mgmteth @SCRIPTS@/bin/pcapInt-wrapper.sh mgmt0 20004 127.0.0.1 20003 127.0.0.1
 prcpar mgmteth con
 proc linport @FREERTR_NATIVE@/bin/tapInt.bin tapnet 20006 127.0.0.1 20005 127.0.0.1 10.255.255.1/24 10.255.255.254
 prcpar linport con

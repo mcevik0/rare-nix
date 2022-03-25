@@ -1,5 +1,6 @@
 { runtimeEnv, moduleWrappers, bfForwarder, p4Profiles, runCommand,
-  lib, makeWrapper, buildEnv, inetutils, coreutils }:
+  lib, makeWrapper, buildEnv, inetutils, coreutils, ethtool,
+  freerouter-native }:
 
 let
   bfshScripts = [ "sh_tna_ports" "sh_tna_temp" ];
@@ -75,6 +76,11 @@ in runCommand "RARE-scripts" {
     wrapProgram $out/bin/if-wrapper.sh \
       --set PATH "${lib.strings.makeBinPath [ inetutils coreutils ]}"
     chmod a+x $out/bin/if-wrapper.sh
+
+    cp ${./pcapInt-wrapper.sh} $out/bin/pcapInt-wrapper.sh
+    wrapProgram $out/bin/pcapInt-wrapper.sh \
+      --set PATH "${lib.strings.makeBinPath [ ethtool inetutils freerouter-native ]}"
+    chmod a+x $out/bin/pcapInt-wrapper.sh
 
     patchShebangs $out/bin
   '')
