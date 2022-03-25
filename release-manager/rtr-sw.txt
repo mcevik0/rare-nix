@@ -110,7 +110,7 @@ alias test bash command attach shell1 /usr/bin/socat - exec:/bin/bash,ctty,pty,s
 alias test bash description get a shell
 alias test tna-upgrade command /nix/var/nix/profiles/RARE/bin/release-manager --install-git origin/master
 alias test tna-upgrade description upgrade everything
-alias test tna-linux-access command ssh 10.255.255.1 /vrf lin /user sysadmin /pass sysadmin
+alias test tna-linux-access command /usr/bin/ssh 10.255.255.1 /vrf lin /user sysadmin /pass sysadmin
 alias test tna-linux-access description access linux console
 alias test tna-port-detect command attach shell1 @NIX_PROFILE@/bin/sh_tna_ports.sh
 alias test tna-port-detect cmd2nd test hwpop uclipm /etc/freertr/tna_ports.cfg server p4lang p4 ports ready auto normal apply add
