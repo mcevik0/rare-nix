@@ -6,7 +6,7 @@
   src = fetchFromGitHub {
     owner = "mc36";
     repo = "freerouter";
-    rev = "81a77045f9b205c41ee7289da49c3d367a720646";
-    sha256 = "04nmx67xskb40401mv2lcm2cgapa49s3zivfd9diqlskawz88xj3";
+    rev = "a0f68bc54d20c0fbf2834420f7723e7ca96c268a";
+    sha256 = "0d7ixxx7zi6yk5aajyv0l1krpxsm3z4w1swr70j9mdlq40rlg7fz";
   };
 }
