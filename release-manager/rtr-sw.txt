@@ -106,9 +106,9 @@ client name-server 1.1.1.1
 client time-server europe.pool.ntp.org
 client time-zone CET
 !
-alias test bash command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin /bin/bash
+]alias test bash command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin /bin/bash
 alias test bash description get a shell
-alias test tna-upgrade command /nix/var/nix/profiles/RARE/bin/release-manager --install-git origin/master
+alias test tna-upgrade command test shell3 /nix/var/nix/profiles/RARE/bin/release-manager --install-git origin/master
 alias test tna-upgrade description upgrade everything
 alias test tna-linux-access command ssh 10.255.255.1 /vrf lin
 alias test tna-linux-access description access linux console
