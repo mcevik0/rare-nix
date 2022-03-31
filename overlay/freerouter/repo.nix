@@ -1,12 +1,12 @@
 { fetchFromGitHub }:
 
 {
-  version = "22.3.28";
+  version = "22.3.31";
 
   src = fetchFromGitHub {
     owner = "mc36";
     repo = "freerouter";
-    rev = "a0f68bc54d20c0fbf2834420f7723e7ca96c268a";
-    sha256 = "0d7ixxx7zi6yk5aajyv0l1krpxsm3z4w1swr70j9mdlq40rlg7fz";
+    rev = "75af6f";
+    sha256 = "00r6b9bqi1l1nq6w78q4n955bbmr60r3lbia6nww9bcfz7nnb7hx";
   };
 }
