@@ -1,6 +1,6 @@
-{ runtimeEnv, moduleWrappers, bfForwarder, p4Profiles, runCommand,
-  lib, makeWrapper, buildEnv, inetutils, coreutils, ethtool,
-  freerouter-native }:
+{ runtimeEnv, moduleWrappers, bfForwarder, p4Profiles, nixProfile,
+  runCommand, lib, makeWrapper, buildEnv, inetutils, coreutils,
+  ethtool, freerouter-native, acpi, bash }:
 
 let
   bfshScripts = [ "sh_tna_ports" "sh_tna_temp" ];
@@ -48,11 +48,16 @@ let
     );
   checkProfile = ''
     declare -A profiles=( ${profilesArrayDef} )
+    profiles="${builtins.concatStringsSep ", " profileNames}"
+    if [ -z "$profile" ]; then
+      echo "Current profile: $(cat $profile_file)"
+      echo "Available profiles: $profiles"
+      exit 0
+    fi
     if ! [ ''${profiles[$profile]+_} ]; then
-      echo "Invalid profile $profile, must be one of \"${builtins.concatStringsSep ", " profileNames}\""
+      echo "Invalid profile $profile, must be one of \"$profiles\""
       exit 1
     fi
-    echo "Using bf_router profile \"$profile\""
   '';
 in runCommand "RARE-scripts" {
   buildInputs = [ makeWrapper ];
@@ -81,6 +86,18 @@ in runCommand "RARE-scripts" {
     wrapProgram $out/bin/pcapInt-wrapper.sh \
       --set PATH "${lib.strings.makeBinPath [ ethtool inetutils freerouter-native ]}"
     chmod a+x $out/bin/pcapInt-wrapper.sh
+
+    substitute ${./exec} $out/bin/exec \
+      --subst-var-by PATH "${lib.strings.makeBinPath [ coreutils acpi bash ]}"
+    chmod a+x $out/bin/exec
+
+    substitute ${./set-profile} $out/bin/set-profile \
+      --subst-var-by CHECK_PROFILE '${checkProfile}'
+    chmod a+x $out/bin/set-profile
+
+    substitute ${./switch-to-generation} $out/bin/switch-to-generation \
+      --subst-var-by NIX_PROFILE '${nixProfile}'
+    chmod a+x $out/bin/switch-to-generation
 
     patchShebangs $out/bin
   '')

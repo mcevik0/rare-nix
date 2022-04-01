@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+profile_file=$1
+profile=$2
+@CHECK_PROFILE@
+echo "Setting bf_router profile to \"$profile\""
+echo "Use"
+echo "reload warm"
+echo "or"
+echo "reload process bfswd"
+echo "reload process bffwd"
+echo "to activate"
+echo $profile >$profile_file

@@ -3,6 +3,7 @@ set -e
 profile=$(cat $1)
 shift
 @CHECK_PROFILE@
+echo "Using bf_router profile \"$profile\""
 if [ -e @WRAPPERS@/bin/bf_forwarder_${profile} ]; then
     forwarder=@WRAPPERS@/bin/bf_forwarder_${profile}
 else

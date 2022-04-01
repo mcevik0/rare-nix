@@ -63,17 +63,19 @@ let
       moduleWrappers = builtins.mapAttrs
         (_: program: program.moduleWrapper' kernelModules) programs;
       scripts = pkgs.callPackage ./scripts {
-        inherit moduleWrappers bfForwarder p4Profiles;
+        inherit moduleWrappers bfForwarder p4Profiles nixProfile;
         runtimeEnv = bf-sde.runtimeEnvNoBsp;
       };
       freeRtrHwConfig = pkgs.callPackage ./release-manager/rtr-hw.nix {
         inherit bf-sde platform scripts;
         inherit (pkgs) freerouter-native;
       };
-    in (import ./services { inherit pkgs bf-sde platform scripts; }) //
-       sliceCommon // moduleWrappers // {
-         inherit sliceFile scripts freeRtrHwConfig kernelModules;
-       };
+    in (import ./services {
+      inherit pkgs bf-sde platform scripts;
+      inherit (sliceCommon) release-manager;
+    }) // sliceCommon // moduleWrappers // {
+      inherit sliceFile scripts freeRtrHwConfig kernelModules;
+    };
 
   ## A release is the union of the slices for all supported kernels
   ## and platforms. The slices have a fairly large overlap of

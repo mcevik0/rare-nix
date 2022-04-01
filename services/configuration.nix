@@ -1,12 +1,28 @@
+release-manager:
+
 { config, pkgs, ... }:
 
 let
-  maybeReboot = pkgs.writeShellScript "freertr-exec-stop-post" ''
-    if [ $EXIT_STATUS -eq 4 ]; then
-      echo "cold reload requested by freeRtr, initiating reboot"
-      ${pkgs.systemd}/bin/systemctl reboot
-    fi
-    exit 0
+  ## Switching generations involves deactivating and reactivating the
+  ## freerouter service. Executing this from the freerouter service
+  ## itself is a bit tricky because it confuses systemd. To work
+  ## around this problem, we execute the switch-over in a transient
+  ## unit with systemd-run. We use --no-block to force asynchronous
+  ## execution, because, for some reason, normal execution leads to a
+  ## one-minute delay.  However, if the current service terminates
+  ## before the new unit is activated, the old service is restarted
+  ## immediately due to "Restart=always". To avoid this, we add a
+  ## couple of seconds of delay before exiting to let systemd converge
+  ## to the new service units.
+  maybeSwitchGeneration = pkgs.writeShellScript "freertr-switch-gen" ''
+      file=/etc/freertr/switch-to-generation
+      if [ -e $file ]; then
+        gen=$(cat $file)
+        echo "Switching to RARE profile generation $gen"
+        ${pkgs.systemd}/bin/systemd-run --no-block ${release-manager}/bin/release-manager --switch-to-generation $gen
+        rm -f $file
+        ${pkgs.coreutils}/bin/sleep 5
+      fi
   '';
 in {
   systemd.services = {
@@ -15,9 +31,20 @@ in {
       after = [ "networking.service" ];
       requires = [ "networking.service" ];
       serviceConfig = {
+        ExecStartPre = maybeSwitchGeneration;
         ExecStart = "${pkgs.freerouter}/bin/freerouter routerc /etc/freertr/rtr-";
-        ExecStopPost = "${maybeReboot}";
-        Restart = "on-failure";
+        ExecStopPost = pkgs.writeShellScript "freertr-exec-stop-post" ''
+          [ -z "$EXIT_STATUS" ] && exit 0
+          if [ $EXIT_STATUS -eq 3 ]; then
+            echo "Warm reload requested by freeRtr"
+            . ${maybeSwitchGeneration}
+          elif [ $EXIT_STATUS -eq 4 ]; then
+            echo "Cold reload requested by freeRtr, initiating reboot"
+            ${pkgs.systemd}/bin/systemctl reboot
+          fi
+          exit 0
+        '';
+        Restart = "always";
         Type = "simple";
       };
     };
