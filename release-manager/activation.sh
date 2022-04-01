@@ -6,7 +6,6 @@ SYSTEMD_DIR=/etc/systemd/system
 CONFIG_DIR=/etc/freertr
 CONFIG_SW=$CONFIG_DIR/rtr-sw.txt
 CONFIG_HW=$CONFIG_DIR/rtr-hw.txt
-P4_PROFILE=$CONFIG_DIR/p4-profile
 SNMP_CONFIG_DIR=/etc/snmp
 SNMPD_CONFIG=$SNMP_CONFIG_DIR/snmpd.conf
 IFINDEX=$SNMP_CONFIG_DIR/ifindex.init
@@ -27,7 +26,7 @@ activate () {
     for file in $IFINDEX $INTERFACE_CONFIG; do
         cp $PROFILE$file $file
     done
-    for config in $CONFIG_SW $P4_PROFILE $SNMPD_CONFIG; do
+    for config in $CONFIG_SW $SNMPD_CONFIG; do
         [ -e $config ] || cp $PROFILE$config $config
     done
     for config in $CONFIG_HW; do

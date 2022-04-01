@@ -9,11 +9,12 @@ support.mkReleaseManager {
   activationCode = ./activation.sh;
   installCmds = ''
     mkdir -p $out/etc/freertr
-    substitute ${./rtr-sw.txt} $out/etc/freertr/rtr-sw.txt --subst-var-by NIX_PROFILE ${nixProfile}
+    substitute ${./rtr-sw.txt} $out/etc/freertr/rtr-sw.txt \
+      --subst-var-by NIX_PROFILE ${nixProfile} \
+      --subst-var-by DEFAULT_PROFILE ${defaultProfile}
     mkdir -p $out/etc/snmp $out/var/lib/snmp
     cp ${./snmpd.conf} $out/etc/snmp/snmpd.conf
     cp ${./ifindex.init} $out/etc/snmp/ifindex.init
     cp ${./interface.conf} $out/var/lib/snmp/interface.conf
-    echo ${defaultProfile} >$out/etc/freertr/p4-profile
   '';
 }
