@@ -108,6 +108,9 @@ client time-zone CET
 !
 alias test bash command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin /bin/bash
 alias test bash description get a shell
+alias test tna-select-profile command attach shell1 @NIX_PROFILE@/bin/tna_set_profile.sh
+alias test tna-select-profile sticky GEANT_TESTBED
+alias test tna-select-profile description select p4 program to run
 alias test tna-upgrade command attach shell1 systemd-run --scope --slice=system.slice @FREERTR_NATIVE@/bin/ptyRun.bin @FREERTR_NATIVE@/bin/daemonRun.bin /nix/var/nix/profiles/RARE/bin/release-manager --install-git origin/master --auto-switch
 alias test tna-upgrade description upgrade everything
 alias test tna-linux-access command ssh 10.255.255.1 /vrf lin
