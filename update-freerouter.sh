@@ -8,6 +8,7 @@ $MSG
 "
 rm rtr.jar
 rm changelog.txt
+rm reload.log
 export VER=`curl https://raw.githubusercontent.com/mc36/freeRouter/master/src/rtr.txt 2>/dev/null`
 echo version = $VER
 export CMT=`curl -H "Accept: application/vnd.github.VERSION.sha" https://api.github.com/repos/mc36/freeRouter/commits/master 2>/dev/null`
