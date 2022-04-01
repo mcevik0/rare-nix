@@ -128,6 +128,7 @@ alias exec tna-switch-to-generation command attach shell2 @NIX_PROFILE@/bin/swit
 alias exec tna-switch-to-generation description Set the generation to activate at the next reload
 alias exec tna-set-profile command attach shell2 @NIX_PROFILE@/bin/set-profile /etc/freertr/p4-profile
 alias exec tna-set-profile description Set the p4 profile to use at the next reload
+alias exec tna-set-profile sticky GEANT_TESTBED
 !
 alias test tna-linux-access command ssh 10.255.255.1 /vrf lin
 alias test tna-linux-access description access linux console
