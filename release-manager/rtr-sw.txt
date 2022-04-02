@@ -106,43 +106,7 @@ client name-server 1.1.1.1
 client time-server europe.pool.ntp.org
 client time-zone CET
 !
-alias test bash command attach shell1 @NIX_PROFILE@/bin/ptyRun.bin @NIX_PROFILE@/bin/exec bash
-alias test bash description get a shell
-!
-!!! Aliases for interaction with the release manager
-alias exec tna-install-devel command attach shell1 @NIX_PROFILE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --install-git origin/master
-alias exec tna-install-devel description Install the latest development version
-alias exec tna-install-release command attach shell1 @NIX_PROFILE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --install-release
-alias exec tna-install-release description Install the specified release
-alias exec tna-update-release command attach shell1 @NIX_PROFILE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --update-release
-alias exec tna-update-release description Install the latest update of the specified release
-alias exec tna-list-installed command attach shell2 @NIX_PROFILE@/bin/release-manager --list-installed
-alias exec tna-list-installed description List all currently installed releases
-alias exec tna-list-available command attach shell2 @NIX_PROFILE@/bin/release-manager --list-available
-alias exec tna-list-available description List all available releases
-alias exec tna-uninstall-generation command attach shell1 @NIX_PROFILE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --uninstall-generation
-alias exec tna-uninstall-generation description Delete the specified generation, use tna-cleanup to permanently remove packages
-alias exec tna-cleanup command attach shell1 @NIX_PROFILE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --cleanup
-alias exec tna-cleanup description Permanently remove unused packages
-alias exec tna-switch-to-generation command attach shell2 @NIX_PROFILE@/bin/switch-to-generation
-alias exec tna-switch-to-generation description Set the generation to activate at the next reload
-alias exec tna-set-profile command attach shell2 @NIX_PROFILE@/bin/set-profile /etc/freertr/p4-profile
-alias exec tna-set-profile description Set the p4 profile to use at the next reload
 alias exec tna-set-profile sticky @DEFAULT_PROFILE@
-!
-alias test tna-linux-access command ssh 10.255.255.1 /vrf lin
-alias test tna-linux-access description access linux console
-alias test tna-port-detect command attach shell1 @NIX_PROFILE@/bin/sh_tna_ports.sh
-alias test tna-port-detect cmd2nd test hwpop uclipm /etc/freertr/tna_ports.cfg server p4lang p4 ports ready auto normal apply add
-alias test tna-port-detect description Detect TOFINO ports
-alias test tna-port-remove command attach shell1 @NIX_PROFILE@/bin/sh_tna_ports.sh
-alias test tna-port-remove cmd2nd test hwpop uclipm /etc/freertr/tna_ports.cfg server p4lang p4 ports ready auto normal apply del
-alias test tna-port-remove description Remove NON RDY TOFINO ports
-alias test tna-linux-temp command attach shell2 @NIX_PROFILE@/bin/exec acpi -V
-alias test tna-linux-temp description display main cpu temperature
-alias test tna-asic-temp command attach shell1 @NIX_PROFILE@/bin/sh_tna_temp.sh
-alias test tna-asic-temp cmd2nd flash type /etc/freertr/tna_temp.cfg
-alias test tna-asic-temp description display forwarding asic cpu temperature
 !
 do write
 !
