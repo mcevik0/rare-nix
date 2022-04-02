@@ -18,22 +18,22 @@ prcpar bfswd act col 500
 proc bffwd @SCRIPTS@/bin/start_bffwd.sh /etc/freertr/p4-profile --no-log-keepalive --platform=@PLATFORM@ --snmp --ifmibs-dir /var/run/rare-snmp --ifindex /etc/snmp/ifindex @BFFWD_EXTRA_ARGS@
 prcpar bffwd act col 500
 
-dcfg alias test bash command attach shell1 @NIX_PROFILE@/bin/ptyRun.bin @NIX_PROFILE@/bin/exec bash
+dcfg alias test bash command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @NIX_PROFILE@/bin/exec bash
 dcfg alias test bash description get a shell
 
-dcfg alias exec tna-install-devel command attach shell1 @NIX_PROFILE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --install-git origin/master
+dcfg alias exec tna-install-devel command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --install-git origin/master
 dcfg alias exec tna-install-devel description Install the latest development version
-dcfg alias exec tna-install-release command attach shell1 @NIX_PROFILE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --install-release
+dcfg alias exec tna-install-release command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --install-release
 dcfg alias exec tna-install-release description Install the specified release
-dcfg alias exec tna-update-release command attach shell1 @NIX_PROFILE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --update-release
+dcfg alias exec tna-update-release command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --update-release
 dcfg alias exec tna-update-release description Install the latest update of the specified release
 dcfg alias exec tna-list-installed command attach shell2 @NIX_PROFILE@/bin/release-manager --list-installed
 dcfg alias exec tna-list-installed description List all currently installed releases
 dcfg alias exec tna-list-available command attach shell2 @NIX_PROFILE@/bin/release-manager --list-available
 dcfg alias exec tna-list-available description List all available releases
-dcfg alias exec tna-uninstall-generation command attach shell1 @NIX_PROFILE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --uninstall-generation
+dcfg alias exec tna-uninstall-generation command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --uninstall-generation
 dcfg alias exec tna-uninstall-generation description Delete the specified generation, use tna-cleanup to permanently remove packages
-dcfg alias exec tna-cleanup command attach shell1 @NIX_PROFILE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --cleanup
+dcfg alias exec tna-cleanup command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @NIX_PROFILE@/bin/release-manager --cleanup
 dcfg alias exec tna-cleanup description Permanently remove unused packages
 dcfg alias exec tna-switch-to-generation command attach shell2 @NIX_PROFILE@/bin/switch-to-generation
 dcfg alias exec tna-switch-to-generation description Set the generation to activate at the next reload
