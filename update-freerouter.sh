@@ -32,5 +32,7 @@ cat > $FIL << EOF
 EOF
 cat $FIL
 git add .
-git commit -m "bumping freerouter to $VER"
+git commit -m "bumping freerouter to $VER
+$MSG
+"
 git push
