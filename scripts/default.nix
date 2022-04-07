@@ -52,7 +52,7 @@ let
     if [ -z "$profile" ]; then
       echo "Current profile: $(cat $profile_file)"
       echo "Available profiles: $profiles"
-      exit 0
+      exit 1
     fi
     if ! [ ''${profiles[$profile]+_} ]; then
       echo "Invalid profile $profile, must be one of \"$profiles\""

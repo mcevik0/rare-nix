@@ -4,11 +4,15 @@ set -e
 profile_file=$1
 profile=$2
 @CHECK_PROFILE@
-echo "Setting bf_router profile to \"$profile\""
-echo "Use"
-echo "reload warm"
-echo "or"
-echo "reload process bfswd"
-echo "reload process bffwd"
-echo "to activate"
-echo $profile >$profile_file
+current=$(cat $profile_file)
+if [ $profile == $current ]; then
+   echo "$profile is already the current profile"
+   exit 1
+fi
+read -n 1 -r  -p "Select bf_router profile \"$profile\" and reload the data-plane processes? [y/n] "
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+   echo $profile >$profile_file
+   exit 0
+fi
+echo -e "\nAborting, current profile remains active"
+exit 1

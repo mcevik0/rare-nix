@@ -3,22 +3,21 @@ set -e
 
 file=/etc/freertr/switch-to-generation
 if [ $# -eq 0 ]; then
-    if [ -e $file ]; then
-	echo "Next reload will activate generation $(cat $file)"
-    else
-	echo "No switch of generation is currently scheduled"
-    fi
-    echo "Please supply the RARE profile generation to use at the next reload"
+    echo "Please supply the RARE profile generation number you want to switch to"
     echo "Use \"tna-list-installed\" to see all currently installed generations"
-    exit 0
+    exit 1
 fi
 gen=$1
 PROFILE=@NIX_PROFILE@
 if ! [ -h $PROFILE-$gen-link ]; then
     echo "$gen is not a valid generation"
     echo "Use \"tna-list-installed\" to see all currently installed generations"
-    exit 0
+    exit 1
 fi
-echo $gen >$file
-echo "Setting RARE profile generation to $gen"
-echo "Use \"reload warm\" to activate"
+read -n 1 -r  -p "Set RARE profile generation to $gen and restart freerouter? [y/n] "
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo $gen >$file
+   exit 0
+fi
+echo -e "\nAborting, current profile remains active"
+exit 1
