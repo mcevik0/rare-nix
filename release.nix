@@ -7,6 +7,8 @@
 , buildOnieInstaller ? false
   ## See default.nix
 , binaryCaches ? []
+, installerPlatforms ? []
+. installerKernels ? []
 }:
 
 let

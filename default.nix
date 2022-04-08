@@ -27,12 +27,18 @@
 ## "trusted-substituters" and "trusted-public-keys" Nix options
 ## according to nix.conf(5)
 , binaryCaches ? []
+
+## By default, the installers are built for all supported platforms
+## and kernels. This can be restricted to the given list of platforms
+## and kernel identifiers
+, installerPlatforms ? []
+, installerKernels ? []
 }:
 
 let
   pkgs = import (fetchTarball {
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/v15.tar.gz;
-    sha256 = "0im3qqfwp6wsdnf5928w9avk4nfyk7n5121kvdg9cwchjb8d5yq7";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/f8a8ca.tar.gz;
+    sha256 = "1pszhyfkibxh0n9k81m4yypk72ax8xkv95lgh8pzbbh90gp53qbi";
   }) {
     overlays = import ./overlay;
   };
@@ -104,12 +110,30 @@ let
       inherit sliceFile scripts freeRtrHwConfig kernelModules;
     };
 
+  select = l1: l2:
+    with builtins;
+    with pkgs.lib;
+    if length l1 == 0 then
+      l2
+    else
+      assert assertMsg (sort lessThan (intersectLists l1 l2) == sort lessThan l1)
+        "\"${toString l1}\" must be a subset of \"${toString l2}\"";
+      l1;
+
   ## A release is the union of the slices for all supported kernels
   ## and platforms. The slices have a fairly large overlap of
   ## identical packages, which creates a rather big Hydra job set, but
   ## that's just a cosmetic issue.
-  platforms = builtins.attrNames (import ./rare/platforms.nix);
-  release = support.mkRelease slice bf-sde.pkgs.kernel-modules platforms;
+  supportedPlatforms = builtins.attrNames (import ./rare/platforms.nix);
+  platforms = select installerPlatforms supportedPlatforms;
+  kernelModules =
+    with builtins;
+    let
+      allModules = bf-sde.pkgs.kernel-modules;
+      names = select installerKernels (attrNames allModules);
+    in
+    pkgs.lib.filterAttrs (n: v: elem n names) allModules;
+  release = support.mkRelease slice kernelModules platforms;
   component = "RARE";
   releaseClosure = support.mkReleaseClosure release component;
   onieInstaller = (support.mkOnieInstaller {
@@ -133,11 +157,13 @@ let
   };
 in {
   inherit release releaseClosure onieInstaller standaloneInstaller;
+  ## For the "install" make target
+  inherit (sliceCommon) release-manager;
 
   ## Final installation on the target system with
   ##   nix-env -f . -p <some-profile-name> -r -i -A install --argstr kernelRelease $(uname -r) --argstr platform <platform>
   install =
     assert kernelRelease != null && platform != null;
-    assert pkgs.lib.assertMsg (builtins.elem platform platforms) "Unsupported platform: ${platform}";
+    assert pkgs.lib.assertMsg (builtins.elem platform supportedPlatforms) "Unsupported platform: ${platform}";
     slice (bf-sde.modulesForKernel kernelRelease) platform;
 }
