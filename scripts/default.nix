@@ -46,16 +46,11 @@ let
     concatStringsSep " " (
       map (p: "[${p}]=") profileNames
     );
+  profileList = builtins.concatStringsSep ", " profileNames;
   checkProfile = ''
     declare -A profiles=( ${profilesArrayDef} )
-    profiles="${builtins.concatStringsSep ", " profileNames}"
-    if [ -z "$profile" ]; then
-      echo "Current profile: $(cat $profile_file)"
-      echo "Available profiles: $profiles"
-      exit 1
-    fi
     if ! [ ''${profiles[$profile]+_} ]; then
-      echo "Invalid profile $profile, must be one of \"$profiles\""
+      echo "Invalid profile $profile, must be one of \"${profileList}\""
       exit 1
     fi
   '';
@@ -94,6 +89,10 @@ in runCommand "RARE-scripts" {
     substitute ${./set-profile} $out/bin/set-profile \
       --subst-var-by CHECK_PROFILE '${checkProfile}'
     chmod a+x $out/bin/set-profile
+
+    substitute ${./list-profiles} $out/bin/list-profiles \
+      --subst-var-by PROFILE_LIST '${profileList}'
+    chmod a+x $out/bin/list-profiles
 
     substitute ${./switch-to-generation} $out/bin/switch-to-generation \
       --subst-var-by NIX_PROFILE '${nixProfile}'

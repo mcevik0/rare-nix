@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+profile_file=$1
+current=$(cat $profile_file)
+profiles="@PROFILE_LIST@"
+echo "Current profile: $current"
+echo "Available profiles: $profiles"
+exit 0

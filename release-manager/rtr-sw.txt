@@ -106,7 +106,7 @@ client name-server 1.1.1.1
 client time-server europe.pool.ntp.org
 client time-zone CET
 !
-alias exec tna-set-profile sticky @DEFAULT_PROFILE@
+alias exec tna-set-profile sticky-param @DEFAULT_PROFILE@
 !
 do write
 !

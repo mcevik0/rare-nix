@@ -12,6 +12,7 @@ support.mkReleaseManager {
     substitute ${./rtr-sw.txt} $out/etc/freertr/rtr-sw.txt \
       --subst-var-by NIX_PROFILE ${nixProfile} \
       --subst-var-by DEFAULT_PROFILE ${defaultProfile}
+    echo ${defaultProfile} >$out/etc/freertr/p4-profile
     mkdir -p $out/etc/snmp $out/var/lib/snmp
     cp ${./snmpd.conf} $out/etc/snmp/snmpd.conf
     cp ${./ifindex.init} $out/etc/snmp/ifindex.init

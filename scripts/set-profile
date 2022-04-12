@@ -4,15 +4,13 @@ set -e
 profile_file=$1
 profile=$2
 @CHECK_PROFILE@
-current=$(cat $profile_file)
-if [ $profile == $current ]; then
-   echo "$profile is already the current profile"
-   exit 1
+if [ -e $profile_file ]; then
+    current=$(cat $profile_file)
+else
+    current="<none>"
 fi
-read -n 1 -r  -p "Select bf_router profile \"$profile\" and reload the data-plane processes? [y/n] "
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-   echo $profile >$profile_file
-   exit 0
+if [ "$current" != "$profile" ]; then
+    echo "Changing P4 profile from $current to $profile, restarting data-plane processes"
 fi
-echo -e "\nAborting, current profile remains active"
-exit 1
+echo $profile >$profile_file
+exit 0
