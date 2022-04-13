@@ -53,7 +53,7 @@ let
   ##      * Add Hydra CI job for <version> branch to spec-ONIE-SWITCH.json
   ##      * Bump version <version+1>
   ##      * Add release-notes/release-<version+1>
-  version = "1theta";
+  version = "1";
   nixProfile = "/nix/var/nix/profiles/RARE";
 
   bf-sde = pkgs.bf-sde.v9_7_1;
