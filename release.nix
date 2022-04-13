@@ -8,7 +8,7 @@
   ## See default.nix
 , binaryCaches ? []
 , installerPlatforms ? []
-. installerKernels ? []
+, installerKernels ? []
 }:
 
 let
@@ -17,7 +17,7 @@ let
 in
 with import ./. {
   inherit (src) gitTag;
-  inherit binaryCaches;
+  inherit binaryCaches installerPlatforms installerKernels;
 };
 
 (optionalAttrs buildRelease {
