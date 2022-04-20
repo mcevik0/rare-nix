@@ -24,7 +24,7 @@ let
   profiles = [
     "BNG"
     "BRAS"
-    "CERN_FLOWSPEC"
+    "CERN_FLOWLAB"
     "CGNAT"
     "CLEANER"
     "CPE"
@@ -32,6 +32,7 @@ let
     "GEANT_TESTBED"
     "GRE"
     "IPIP"
+    "KIFU_LNS"
     "NFV"
     "NOP_MCHOME"
     "P"
