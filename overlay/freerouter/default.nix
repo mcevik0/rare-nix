@@ -8,7 +8,7 @@ let
     done
     echo "[ $deps ]">$out
   '');
-  jre_headless = callPackage ../jre.nix {
+  jre_minimal = callPackage ../jre.nix {
     inherit jdk modules;
   };
 in stdenv.mkDerivation {
@@ -21,7 +21,7 @@ in stdenv.mkDerivation {
   buildPhase = "true";
   installPhase = ''
     mkdir -p $out/bin
-    makeWrapper ${jre_headless}/bin/java $out/bin/freerouter \
+    makeWrapper ${jre_minimal}/bin/java $out/bin/freerouter \
       --add-flags "-Xmx2048m -jar ${freerouter-jar}/rtr.jar"
   '';
 }

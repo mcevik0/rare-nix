@@ -24,7 +24,7 @@ let
         patchPhase = "";
       });
 
-      jdk = self.jdk14;
+      jdk = self.jdk14_headless;
       freerouter-jar = super.callPackage freerouter/jar.nix {};
       freerouter = super.callPackage ./freerouter {};
       freerouter-native = super.callPackage ./freerouter/native.nix {
