@@ -71,6 +71,9 @@ dcfg alias exec tna-set-profile description Set the p4 profile and restart the d
 dcfg alias exec tna-list-profiles command attach shell2 @SCRIPTS@/bin/list-profiles /etc/freertr/p4-profile
 dcfg alias exec tna-list-profiles description List the available p4 profiles
 
+dcfg alias exec tna-bfshell command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @BF_UTILS@/bin/bfshell
+dcfg alias exec tna-bfshell description Start bfshell
+
 dcfg alias test tna-linux-access command ssh 10.255.255.1 /vrf lin
 dcfg alias test tna-linux-access description access linux console
 dcfg alias test tna-port-detect command attach shell1 @SCRIPTS@/bin/sh_tna_ports.sh
