@@ -12,10 +12,10 @@ else
 endif
 
 onieInstaller:
-	NIX_PATH= nix-build -A onieInstaller $(selectionLists) --argstr gitTag $(gitTag)
+	NIX_PATH= nix-build -j auto -A onieInstaller $(selectionLists) --argstr gitTag $(gitTag)
 
 standaloneInstaller:
-	NIX_PATH= nix-build -A standaloneInstaller $(selectionLists) --argstr gitTag $(gitTag)
+	NIX_PATH= nix-build -j auto -A standaloneInstaller $(selectionLists) --argstr gitTag $(gitTag)
 	@set -e; \
 	dest=/tmp/$@; \
 	echo "Writing installer to $$dest\n"; \
@@ -33,5 +33,5 @@ standaloneInstaller:
 
 install:
 	@echo "Building release manager"
-	@NIX_PATH= nix-build -A release-manager
+	@NIX_PATH= nix-build -j auto -A release-manager
 	@sudo ./result/bin/release-manager --install-local .
