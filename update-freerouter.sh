@@ -11,9 +11,9 @@ rm changelog.txt
 rm reload.log
 export VER=`curl http://sources.freertr.org/src/rtr.txt 2>/dev/null`
 echo version = $VER
-export CMT=`curl -H "Accept: application/vnd.github.VERSION.sha" https://api.github.com/repos/rare-freertr/freertr/commits/master 2>/dev/null`
+export CMT=`curl -H "Accept: application/vnd.github.VERSION.sha" https://api.github.com/repos/rare-freertr/freeRtr/commits/master 2>/dev/null`
 echo commit = $CMT
-export SUM=`nix-prefetch-url --unpack https://github.com/rare-freertr/freertr/archive/$CMT.tar.gz 2>/dev/null | tail -1`
+export SUM=`nix-prefetch-url --unpack https://github.com/rare-freertr/freeRtr/archive/$CMT.tar.gz 2>/dev/null | tail -1`
 echo sha256 = $SUM
 export FIL=./overlay/freerouter/repo.nix
 cat > $FIL << EOF
@@ -24,7 +24,7 @@ cat > $FIL << EOF
 
   src = fetchFromGitHub {
     owner = "rare-freertr";
-    repo = "freertr";
+    repo = "freeRtr";
     rev = "$CMT";
     sha256 = "$SUM";
   };
