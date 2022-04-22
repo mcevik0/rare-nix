@@ -33,14 +33,25 @@
 ## and kernel identifiers
 , installerPlatforms ? []
 , installerKernels ? []
+
+## Optional dynamic override of the source of freerouter. This set
+## should contain the attributes "version" and "src" to override
+## overlay/freerouter/repo.nix.
+, freerouterSrc ? {}
 }:
 
 let
+  freerouterOverlay = self: super:
+    {
+      freerouter-jar = super.freerouter-jar.overrideAttrs (oldAttrs:
+        freerouterSrc
+      );
+    };
   pkgs = import (fetchTarball {
     url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/0d519d.tar.gz;
     sha256 = "0i7chbbnspic8nhpzinsa28xhqx373p72a5rbaik934jglb37fzr";
   }) {
-    overlays = import ./overlay;
+    overlays = import ./overlay ++ [ freerouterOverlay ];
   };
 
   ## Release workflow when the final change has been committed (that
