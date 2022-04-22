@@ -23,8 +23,8 @@ cat > $FIL << EOF
   version = "$VER";
 
   src = fetchFromGitHub {
-    owner = "mc36";
-    repo = "freerouter";
+    owner = "rare-freertr";
+    repo = "freertr";
     rev = "$CMT";
     sha256 = "$SUM";
   };
