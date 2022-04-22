@@ -1,4 +1,4 @@
-{ lib, bf-sde, platform, scripts, freerouter-native, runCommand }:
+{ lib, bf-sde, platform, scripts, freerouter-native, release-manager, runCommand }:
 
 let
   forwarderExtraArgs = lib.optionalString (platform == "stordis_bf2556x_1t")
@@ -10,5 +10,6 @@ in runCommand "rtr-hw.txt" {} ''
     --subst-var-by FREERTR_NATIVE ${freerouter-native} \
     --subst-var-by PLATFORM ${platform} \
     --subst-var-by BFFWD_EXTRA_ARGS "${forwarderExtraArgs}" \
-    --subst-var-by BF_UTILS ${bf-sde.pkgs.bf-utils}
+    --subst-var-by BF_UTILS ${bf-sde.pkgs.bf-utils} \
+    --subst-var-by RELEASE_MANAGER ${release-manager}
 ''

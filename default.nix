@@ -113,6 +113,7 @@ let
       freeRtrHwConfig = pkgs.callPackage ./release-manager/rtr-hw.nix {
         inherit bf-sde platform scripts;
         inherit (pkgs) freerouter-native;
+        inherit (sliceCommon) release-manager;
       };
     in (import ./services {
       inherit pkgs bf-sde platform scripts;

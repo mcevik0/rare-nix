@@ -21,32 +21,38 @@ prcpar bffwd act col 500
 dcfg alias test bash command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @SCRIPTS@/bin/exec bash
 dcfg alias test bash description get a shell
 
-dcfg alias exec tna-install-latest command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin /nix/var/nix/profiles/RARE/bin/release-manager --install-git origin/master
-dcfg alias exec tna-install-latest description Install the latest commit of the master branch
+dcfg alias exec tna-install-latest command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @RELEASE_MANAGER@/bin/release-manager --install-git origin/master
+dcfg alias exec tna-install-latest description Install the latest RARE development version
 
-dcfg alias exec tna-install-git command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin /nix/var/nix/profiles/RARE/bin/release-manager --install-git
+dcfg alias exec tna-install-experimental command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @RELEASE_MANAGER@/bin/release-manager --install-experimental
+dcfg alias exec tna-install-experimental description Install the latest commit of freerouter on top of the latest RARE development version
+
+dcfg alias exec tna-install-git command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @RELEASE_MANAGER@/bin/release-manager --install-git
 dcfg alias exec tna-install-git parameter required
 dcfg alias exec tna-install-git description Install the version from a specific Git commit
 
-dcfg alias exec tna-install-release command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin /nix/var/nix/profiles/RARE/bin/release-manager --install-release
+dcfg alias exec tna-install-release command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @RELEASE_MANAGER@/bin/release-manager --install-release
 dcfg alias exec tna-install-release parameter required
 dcfg alias exec tna-install-release description Install the specified release
 
-dcfg alias exec tna-update-release command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin /nix/var/nix/profiles/RARE/bin/release-manager --update-release
+dcfg alias exec tna-update-release command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @RELEASE_MANAGER@/bin/release-manager --update-release
 dcfg alias exec tna-update-release parameter required
 dcfg alias exec tna-update-release description Install the latest update of the specified release
 
-dcfg alias exec tna-list-installed command attach shell2 /nix/var/nix/profiles/RARE/bin/release-manager --list-installed
+dcfg alias exec tna-list-installed command attach shell2 @RELEASE_MANAGER@/bin/release-manager --list-installed
 dcfg alias exec tna-list-installed description List all currently installed releases
 
-dcfg alias exec tna-list-available command attach shell2 /nix/var/nix/profiles/RARE/bin/release-manager --list-available
+dcfg alias exec tna-list-long-installed command attach shell2 @RELEASE_MANAGER@/bin/release-manager --list-installed=full
+dcfg alias exec tna-list-long-installed description List all currently installed releases with non-abbreviated Git tags
+
+dcfg alias exec tna-list-available command attach shell2 @RELEASE_MANAGER@/bin/release-manager --list-available
 dcfg alias exec tna-list-available description List all available releases
 
-dcfg alias exec tna-uninstall-generation command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin /nix/var/nix/profiles/RARE/bin/release-manager --uninstall-generation
+dcfg alias exec tna-uninstall-generation command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @RELEASE_MANAGER@/bin/release-manager --uninstall-generation
 dcfg alias exec tna-uninstall-generation parameter required
 dcfg alias exec tna-uninstall-generation description Delete the specified generation, use tna-cleanup to permanently remove packages
 
-dcfg alias exec tna-cleanup command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin /nix/var/nix/profiles/RARE/bin/release-manager --cleanup
+dcfg alias exec tna-cleanup command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @RELEASE_MANAGER@/bin/release-manager --cleanup
 dcfg alias exec tna-cleanup description Permanently remove unused packages
 
 dcfg alias exec tna-switch-to-generation command attach shell1 @FREERTR_NATIVE@/bin/ptyRun.bin @SCRIPTS@/bin/switch-to-generation
