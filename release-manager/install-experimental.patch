@@ -1,0 +1,120 @@
+diff -Naur release-manager.orig/release-manager release-manager/release-manager
+--- release-manager.orig/release-manager	2022-04-22 10:22:47.168757597 +0200
++++ release-manager/release-manager	2022-04-22 13:08:10.484656131 +0200
+@@ -8,6 +8,8 @@
+ LIB=@SELF@/lib
+ REPO_URL=@REPO_URL@
+ API_URL=@API_URL@
++FREERTR_API_URL=https://api.github.com/repos/rare-freertr/freeRtr
++FREERTR_REPO_URL=https://github.com/rare-freertr/freeRtr
+ 
+ PATH=/nix/var/nix/profiles/default/bin:@PATH@
+ NIX_PATH=
+@@ -23,6 +25,7 @@
+          --install-release RELEASE [ --auto-switch ]
+          --install-git COMMIT [ --auto-switch ]
+          --install-local DIRECTORY [ --auto-switch ]
++         --install-experimental [ --auto-switch ]
+          --update-release RELEASE [ --auto-switch ]
+          --uninstall-generation GENERATION
+          --activate-current
+@@ -38,6 +41,7 @@
+               -l install-release: \
+               -l install-git: \
+               -l install-local: \
++              -l install-experimental \
+               -l update-release: \
+               -l auto-switch \
+               -l uninstall-generation: \
+@@ -85,6 +89,10 @@
+             install_local=$2
+             shift 2
+             ;;
++        --install-experimental)
++            install_experimental=1
++            shift
++            ;;
+         --update-release)
+             update_release=$2
+             shift 2
+@@ -361,16 +369,19 @@
+ ## Input: directory where the Nix expression is located
+ ##        gitTag
+ ##        auto-switch flag
++##        directory where the freertr source is located
+ ## Output: new generation of profile
+ _install () {
+-    local dir gitTag switch new_gen
++    local dir gitTag switch freertr_src new_gen
+     dir=$1
+     gitTag=$2
+     switch=$3
++    freertr_src=$4
+     nix-env -f $dir -p $PROFILE -r -i -A install \
+             --argstr gitTag $gitTag \
+             --argstr kernelRelease $kernel_release \
+-            --argstr platform $platform
++            --argstr platform $platform \
++            ${freertr_src:+--arg freerouterSrc "{ version = \"experimental\"; src = $freertr_src; }"}
+     new_gen=$(gen_from_path $(readlink $PROFILE))
+     ## nix-env has automatically switched to the new
+     ## generation, revert back
+@@ -384,15 +395,17 @@
+ 
+ ## Input: directory where the Nix expression is located
+ ##        gitTag
++##        directory where the freertr source is located
+ ##        auto-switch flag
+ _auto_install () {
+-    local dir gitTag switch gen
++    local dir gitTag switch freertr_src gen
+     dir=$1
+     gitTag=$2
+     switch=$3
++    freertr_src=$4
+     gen=$(_check_installed $dir $gitTag)
+     if [ $gen -eq 0 ]; then
+-        gen=$(_install $dir $gitTag "$switch")
++        gen=$(_install $dir $gitTag "$switch" $freertr_src)
+         add_path $PROFILE-${gen}-link
+     fi
+     if [ -n "$switch" ]; then
+@@ -469,6 +482,30 @@
+     _auto_install $dir $gitTag "$switch"
+ }
+ 
++## Fetch the newest commit of the freerouter repo and install it on
++## top of the newest commit of the RARE package repo.
++## Input: auto-switch flag
++## Output: none
++install_experimental () {
++    local switch commit_head tmp_freertr tmp_pkgs gitTag
++    switch=$1
++    commit_head=$(api_call /git/ref/heads/master $FREERTR_API_URL | jq -r '.object.sha')
++    INFO "Installing the latest commit of freertr ($commit_head) on top of the latest RARE development version"
++    echo "${red}WARNING: this could lead to a failed build or a non-functional application${normal}"
++    echo
++    check_root
++    tmp_freertr=$(mktemp -d)
++    paths_to_rm+=$tmp_freertr
++    INFO "Fetching $commit_head from $FREERTR_REPO_URL"
++    curl -L $FREERTR_REPO_URL/archive/$commit_head.tar.gz | tar -C $tmp_freertr -xzf - --strip-component 1
++
++    tmp_pkgs=$(mktemp -d)
++    paths_to_rm+=$tmp_pkgs
++    _fetch_git origin/master $tmp_pkgs
++    gitTag=$(_git_describe $tmp_pkgs)-freertr-$(echo ${commit_head:0:6})
++    _auto_install $tmp_pkgs $gitTag "$switch" $tmp_freertr
++}
++
+ ## Input: release version
+ ## Output: gitTag of principal release
+ ## Terminates if release does not exist
+@@ -538,6 +575,7 @@
+ [ -n "$install_release" ] && install_release $install_release "$auto_switch"
+ [ -n "$install_git" ] && install_git $install_git "$auto_switch"
+ [ -n "$install_local" ] && install_local $install_local "$auto_switch"
++[ -n "$install_experimental" ] && install_experimental "$auto_switch"
+ [ -n "$update_release" ] && update_release $update_release "$auto_switch"
+ [ -n "$uninstall_generation" ] && uninstall_generation $uninstall_generation
+ [ -n "$activate" ] && activate

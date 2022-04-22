@@ -18,4 +18,5 @@ support.mkReleaseManager {
     cp ${./ifindex.init} $out/etc/snmp/ifindex.init
     cp ${./interface.conf} $out/var/lib/snmp/interface.conf
   '';
+  patches = [ ./install-experimental.patch ];
 }

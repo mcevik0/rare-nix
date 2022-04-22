@@ -5,14 +5,16 @@ selectionLists = --arg installerPlatforms '[ $(patsubst %,"%",$(PLATFORMS)) ]' -
 
 gitDescribe=$(shell git describe --always)
 ifneq ($(shell git status --porcelain),)
-  gitTag = $(gitDescribe)-$(shell find . -type f ! -path "./.git/*" ! -name "result*" ! -name "*~" -exec sha256sum {} \; | sha256sum | cut -c1-6)
+  gitTag = $(gitDescribe)-local-$(shell find . -type f ! -path "./.git/*" ! -name "result*" ! -name "*~" -exec sha256sum {} \; | sha256sum | cut -c1-6)
   $(info Repo is modified, using extended tag as release identifier: $(gitTag))
 else
   gitTag = $(gitDescribe)
 endif
 
 onieInstaller:
-	NIX_PATH= nix-build -j auto -A onieInstaller $(selectionLists) --argstr gitTag $(gitTag)
+	NIX_PATH= nix-build -j auto -A onieInstaller $(selectionLists) \
+	  --argstr gitTag $(gitTag) \
+	  --arg binaryCaches '[{url = "http://p4.cache.nix.net.switch.ch"; key = "p4.cache.nix.net.switch.ch:cR3VMGz/gdZIdBIaUuh42clnVi5OS1McaiJwFTn5X5g=";}]'
 
 standaloneInstaller:
 	NIX_PATH= nix-build -j auto -A standaloneInstaller $(selectionLists) --argstr gitTag $(gitTag)
