@@ -1,8 +1,8 @@
 {
-    "release-1theta": {
+    "release-1": {
         "enabled": 1,
         "hidden": false,
-        "description": "8th pre-release of version 1",
+        "description": "ONIE installer for release 1",
         "nixexprinput": "src",
         "nixexprpath": "release.nix",
         "checkinterval": 300,
@@ -11,7 +11,7 @@
         "emailoverride": "",
         "keepnr": 3,
         "inputs": {
-            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1theta", "emailresponsible": false },
+            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1", "emailresponsible": false },
 	    "buildRelease": { "type": "boolean", "value": "false" },
 	    "buildOnieInstaller": { "type": "boolean", "value": "true" },
 	    "binaryCaches": { "type": "nix", "value": "[{url = \"http://p4.cache.nix.net.switch.ch\"; key = \"p4.cache.nix.net.switch.ch:cR3VMGz/gdZIdBIaUuh42clnVi5OS1McaiJwFTn5X5g=\";}]" }

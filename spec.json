@@ -15,10 +15,10 @@
 	    "buildInstaller": { "type": "boolean", "value": "false" }
         }
     },
-    "release-1alpha": {
+    "release-1": {
         "enabled": 1,
         "hidden": false,
-        "description": "1st pre-release of version 1",
+        "description": "Release 1",
         "nixexprinput": "src",
         "nixexprpath": "release.nix",
         "checkinterval": 300,
@@ -27,119 +27,7 @@
         "emailoverride": "",
         "keepnr": 3,
         "inputs": {
-            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1alpha", "emailresponsible": false },
-	    "buildInstaller": { "type": "boolean", "value": "true" }
-        }
-    },
-    "release-1beta": {
-        "enabled": 1,
-        "hidden": false,
-        "description": "2nd pre-release of version 1",
-        "nixexprinput": "src",
-        "nixexprpath": "release.nix",
-        "checkinterval": 300,
-        "schedulingshares": 100,
-        "enableemail": false,
-        "emailoverride": "",
-        "keepnr": 3,
-        "inputs": {
-            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1beta", "emailresponsible": false },
-	    "buildInstaller": { "type": "boolean", "value": "true" }
-        }
-    },
-    "release-1gamma": {
-        "enabled": 1,
-        "hidden": false,
-        "description": "3rd pre-release of version 1",
-        "nixexprinput": "src",
-        "nixexprpath": "release.nix",
-        "checkinterval": 300,
-        "schedulingshares": 100,
-        "enableemail": false,
-        "emailoverride": "",
-        "keepnr": 3,
-        "inputs": {
-            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1gamma", "emailresponsible": false },
-	    "buildInstaller": { "type": "boolean", "value": "true" }
-        }
-    },
-    "release-1delta": {
-        "enabled": 1,
-        "hidden": false,
-        "description": "4th pre-release of version 1",
-        "nixexprinput": "src",
-        "nixexprpath": "release.nix",
-        "checkinterval": 300,
-        "schedulingshares": 100,
-        "enableemail": false,
-        "emailoverride": "",
-        "keepnr": 3,
-        "inputs": {
-            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1delta", "emailresponsible": false },
-	    "buildInstaller": { "type": "boolean", "value": "true" }
-        }
-    },
-    "release-1epsilon": {
-        "enabled": 1,
-        "hidden": false,
-        "description": "5th pre-release of version 1",
-        "nixexprinput": "src",
-        "nixexprpath": "release.nix",
-        "checkinterval": 300,
-        "schedulingshares": 100,
-        "enableemail": false,
-        "emailoverride": "",
-        "keepnr": 3,
-        "inputs": {
-            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1epsilon", "emailresponsible": false },
-	    "buildInstaller": { "type": "boolean", "value": "true" }
-        }
-    },
-    "release-1zeta": {
-        "enabled": 1,
-        "hidden": false,
-        "description": "6th pre-release of version 1",
-        "nixexprinput": "src",
-        "nixexprpath": "release.nix",
-        "checkinterval": 300,
-        "schedulingshares": 100,
-        "enableemail": false,
-        "emailoverride": "",
-        "keepnr": 3,
-        "inputs": {
-            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1zeta", "emailresponsible": false },
-	    "buildInstaller": { "type": "boolean", "value": "true" }
-        }
-    },
-    "release-1eta": {
-        "enabled": 1,
-        "hidden": false,
-        "description": "7th pre-release of version 1",
-        "nixexprinput": "src",
-        "nixexprpath": "release.nix",
-        "checkinterval": 300,
-        "schedulingshares": 100,
-        "enableemail": false,
-        "emailoverride": "",
-        "keepnr": 3,
-        "inputs": {
-            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1eta", "emailresponsible": false },
-	    "buildInstaller": { "type": "boolean", "value": "true" }
-        }
-    },
-    "release-1theta": {
-        "enabled": 1,
-        "hidden": false,
-        "description": "8th pre-release of version 1",
-        "nixexprinput": "src",
-        "nixexprpath": "release.nix",
-        "checkinterval": 300,
-        "schedulingshares": 100,
-        "enableemail": false,
-        "emailoverride": "",
-        "keepnr": 3,
-        "inputs": {
-            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1theta", "emailresponsible": false },
+            "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git 1", "emailresponsible": false },
 	    "buildStandaloneInstaller": { "type": "boolean", "value": "true" }
         }
     }
