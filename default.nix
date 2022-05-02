@@ -48,8 +48,8 @@ let
       );
     };
   pkgs = import (fetchTarball {
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/3434a2.tar.gz;
-    sha256 = "044d79bxv5dfy9n2631fx4g81pqi52cw0flh6chh4ia8dz72qpnx";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/46726d.tar.gz;
+    sha256 = "1l5hfbry60zdn8cz4lzwiavv5y5j0q8bjh83mhbp1fgcp5inm59g";
   }) {
     overlays = import ./overlay ++ [ freerouterOverlay ];
   };
@@ -149,7 +149,8 @@ let
   component = "RARE";
   releaseClosure = support.mkReleaseClosure release component;
   onieInstaller = (support.mkOnieInstaller {
-    inherit version nixProfile platforms component binaryCaches;
+    inherit version nixProfile component binaryCaches;
+    platforms = builtins.filter (platform: platform != "model") platforms;
     ## The kernel used here must match that from the profile
     partialSlice = slice bf-sde.pkgs.kernel-modules.Debian11_0;
     bootstrapProfile = ./onie/profile;
