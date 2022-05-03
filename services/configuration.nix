@@ -28,8 +28,8 @@ in {
   systemd.services = {
     freerouter = {
       description = "freeRtr Daemon";
-      after = [ "networking.service" ];
-      requires = [ "networking.service" ];
+      after = [ "network-online.target" ];
+      requires = [ "network-online.target" ];
       serviceConfig = {
         ExecStartPre = maybeSwitchGeneration;
         ExecStart = "${pkgs.freerouter}/bin/freerouter routerc /etc/freertr/rtr-";
