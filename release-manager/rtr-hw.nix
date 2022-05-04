@@ -13,5 +13,7 @@ in runCommand "rtr-hw.txt" {} (''
     --subst-var-by BF_UTILS ${bf-sde.pkgs.bf-utils} \
     --subst-var-by RELEASE_MANAGER ${release-manager}
   '' + lib.optionalString (platform == "model") ''
-  sed -E -i -e '/(mgmt0|bf_pci)/d' $out/etc/freertr/rtr-hw.txt
+  sed -E -i -e '/mgmt0/d' $out/etc/freertr/rtr-hw.txt
+  substituteInPlace $out/etc/freertr/rtr-hw.txt \
+    --replace bf_pci0 veth251
 '')
