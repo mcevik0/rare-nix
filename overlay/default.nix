@@ -1,4 +1,5 @@
 let
+  pythonOverlay = import ./python.nix;
   overlay = self: super:
     {
 
@@ -58,4 +59,4 @@ let
 
       SNMPAgent = super.callPackage ./snmp {};
     };
-in [ overlay ]
+in [ overlay pythonOverlay ]

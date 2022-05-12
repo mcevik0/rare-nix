@@ -16,7 +16,7 @@ in python.pkgs.buildPythonApplication rec {
   pname = "bf_forwarder";
 
   propagatedBuildInputs = [
-    bf-drivers-runtime sal_modules
+    bf-drivers-runtime sal_modules pkgs.python3Pkgs.yappi
   ] ++ pkgs.lib.optional (platform == "stordis_bf2556x_1t")
     bf-sde.pkgs.bf-platforms.aps_bf2556;
 
