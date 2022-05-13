@@ -7,8 +7,8 @@
         "nixexprpath": "release.nix",
         "checkinterval": 300,
         "schedulingshares": 100,
-        "enableemail": false,
-        "emailoverride": "",
+        "enableemail": true,
+        "emailoverride": "rare-dev@lists.geant.org",
         "keepnr": 3,
         "inputs": {
             "src": { "type": "git", "value": "https://bitbucket.software.geant.org/scm/rare/rare-nix.git master", "emailresponsible": false },
