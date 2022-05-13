@@ -4,6 +4,7 @@ let
   repo = import ../repo.nix { inherit (pkgs) fetchgit; };
   bf-drivers-runtime = bf-sde.pkgs.bf-drivers-runtime;
   python = bf-drivers-runtime.pythonModule;
+  pythonModules = import ./python.nix { inherit pkgs python; };
   ## The sal module currently only provides the salgrpcclient
   ## module. It resides in a non-public repository as requested by
   ## Stordis.  This seems a bit silly and it is expected that it will
@@ -16,8 +17,9 @@ in python.pkgs.buildPythonApplication rec {
   pname = "bf_forwarder";
 
   propagatedBuildInputs = [
-    bf-drivers-runtime sal_modules pkgs.python3Pkgs.yappi
-  ] ++ pkgs.lib.optional (platform == "stordis_bf2556x_1t")
+    bf-drivers-runtime sal_modules
+  ] ++ (with pythonModules; [ yappi ])
+  ++ pkgs.lib.optional (platform == "stordis_bf2556x_1t")
     bf-sde.pkgs.bf-platforms.aps_bf2556;
 
   preConfigure = ''
