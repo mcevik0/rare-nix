@@ -1,12 +1,12 @@
 { fetchFromGitHub }:
 
 {
-  version = "22.5.14";
+  version = "22.5.21";
 
   src = fetchFromGitHub {
     owner = "rare-freertr";
     repo = "freeRtr";
-    rev = "47c6bd6a79bc508e36aca1be1cbb5ddb1c89efec";
-    sha256 = "1wd7x8mxxgm9iqh1hz12s66y9q5zs128w9k9lgyljydwcs8qxg6g";
+    rev = "38bffce5edaf8dab31d68527a763b6562bf9764e";
+    sha256 = "1cr2w7x250nsrssqhq2y46qp3fkfhwd9s0ny17bhhdc12yq4kf27";
   };
 }
