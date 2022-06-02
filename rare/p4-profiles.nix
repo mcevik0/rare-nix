@@ -42,6 +42,7 @@ let
     "RENATER_PEERING_L3"
     "SRV6"
     "TOR"
+    "VPLS"
     "WLC"
     "GGSN"
   ];
