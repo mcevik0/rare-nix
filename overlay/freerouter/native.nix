@@ -16,7 +16,7 @@ in gcc10Stdenv.mkDerivation (repo // {
 
     mkdir binTmp
     pushd misc/native
-    substituteInPlace p4dpdk.h --replace '<dpdk/' '<'
+    substituteInPlace p4dpdk.c --replace '<dpdk/' '<'
     sh -e ./c.sh
     popd
   '';
