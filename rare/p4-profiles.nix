@@ -50,12 +50,12 @@ let
     lib.genAttrs profiles (profile: [ "-DPROFILE_${profile}" ]);
   additionalFlags = {
     GEANT_TESTBED = {
-      buildFlags = lib.optional (lib.versionAtLeast bf-sde.version "9.7.1")
+      buildFlags = lib.optionals (lib.versionAtLeast bf-sde.version "9.7.1")
         ## See Issue P4C-3974 in 9.7.1 release notes
         [ ''-Xp4c="--disable-parse-depth-limit"'' ];
     };
     NOP_MCHOME = {
-      buildFlags = lib.optional (lib.versionAtLeast bf-sde.version "9.7.1")
+      buildFlags = lib.optionals (lib.versionAtLeast bf-sde.version "9.7.1")
         [ ''-Xp4c="--disable-parse-depth-limit"'' ];
     };
   };

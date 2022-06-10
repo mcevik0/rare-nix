@@ -173,6 +173,9 @@ in {
   ## For the "install" make target
   inherit (sliceCommon) release-manager;
 
+  ## Make the per-profile compiler options accessible
+  inherit p4Profiles;
+
   ## Final installation on the target system with
   ##   nix-env -f . -p <some-profile-name> -r -i -A install --argstr kernelRelease $(uname -r) --argstr platform <platform>
   install =
