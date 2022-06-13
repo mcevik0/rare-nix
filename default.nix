@@ -28,11 +28,16 @@
 ## according to nix.conf(5)
 , binaryCaches ? []
 
-## By default, the installers are built for all supported platforms
-## and kernels. This can be restricted to the given list of platforms
-## and kernel identifiers
-, installerPlatforms ? []
-, installerKernels ? []
+## By default, the release is built for all platforms listed in
+## rare/platforms.nix. A subset of that list can be selected to
+## restrict the platforms included in the release.
+, releasePlatforms ? []
+
+## The release can include kernel modules for all kernels listed in
+## rare/kernels.nix (which must be a subset of the kernels supported
+## by the selected SDE version). A subset of that list can be selecetd
+## to restrict the kernel versions included in the release.
+, releaseKernels ? []
 
 ## Optional dynamic override of the source of freerouter. This set
 ## should contain the attributes "version" and "src" to override
@@ -137,20 +142,20 @@ let
   ## identical packages, which creates a rather big Hydra job set, but
   ## that's just a cosmetic issue.
   supportedPlatforms = builtins.attrNames (import ./rare/platforms.nix);
-  platforms = select installerPlatforms supportedPlatforms;
+  platforms = select releasePlatforms supportedPlatforms;
   kernelModules =
     with builtins;
     let
       allModules = bf-sde.pkgs.kernel-modules;
-      names = select installerKernels (attrNames allModules);
+      selectedKernels = select releaseKernels (import rare/kernels.nix);
     in
-    pkgs.lib.filterAttrs (n: v: elem n names) allModules;
+    pkgs.lib.filterAttrs (n: v: elem n selectedKernels) allModules;
   release = support.mkRelease slice kernelModules platforms;
   component = "RARE";
   releaseClosure = support.mkReleaseClosure release component;
   onieInstaller = (support.mkOnieInstaller {
     inherit version nixProfile component binaryCaches;
-    platforms = builtins.filter (platform: platform != "model") platforms;
+    platforms = builtins.filter (platform: builtins.match "^model.*" platform == null) platforms;
     ## The kernel used here must match that from the profile
     partialSlice = slice bf-sde.pkgs.kernel-modules.Debian11_0;
     bootstrapProfile = ./onie/profile;

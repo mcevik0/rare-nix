@@ -7,8 +7,8 @@
 , buildOnieInstaller ? false
   ## See default.nix
 , binaryCaches ? []
-, installerPlatforms ? []
-, installerKernels ? []
+, releasePlatforms ? []
+, releaseKernels ? []
 }:
 
 let
@@ -17,7 +17,7 @@ let
 in
 with import ./. {
   inherit (src) gitTag;
-  inherit binaryCaches installerPlatforms installerKernels;
+  inherit binaryCaches releasePlatforms releaseKernels;
 };
 
 (optionalAttrs buildRelease {

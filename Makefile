@@ -1,7 +1,7 @@
 PLATFORMS =
 KERNELS =
 
-selectionLists = --arg installerPlatforms '[ $(patsubst %,"%",$(PLATFORMS)) ]' --arg installerKernels '[ $(patsubst %,"%",$(KERNELS)) ]'
+selectionLists = --arg releasePlatforms '[ $(patsubst %,"%",$(PLATFORMS)) ]' --arg releaseKernels '[ $(patsubst %,"%",$(KERNELS)) ]'
 
 gitDescribe=$(shell git describe --always)
 ifneq ($(shell git status --porcelain),)
