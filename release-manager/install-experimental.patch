@@ -50,7 +50,7 @@ diff -Naur release-manager.orig/release-manager release-manager/release-manager
      gitTag=$2
      switch=$3
 +    freertr_src=$4
-     nix-env -f $dir -p $PROFILE -r -i -A install \
+     nix-env -j auto -f $dir -p $PROFILE -r -i -A install \
              --argstr gitTag $gitTag \
              --argstr kernelRelease $kernel_release \
 -            --argstr platform $platform
