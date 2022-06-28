@@ -31,6 +31,7 @@ in {
       after = [ "network-online.target" ];
       requires = [ "network-online.target" ];
       serviceConfig = {
+        Environment = "TOFINO_MODEL_PORTINFO=/etc/freertr/ports.json";
         ExecStartPre = maybeSwitchGeneration;
         ExecStart = "${pkgs.freerouter}/bin/freerouter routerc /etc/freertr/rtr-";
         ExecStopPost = pkgs.writeShellScript "freertr-exec-stop-post" ''
