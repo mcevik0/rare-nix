@@ -1,7 +1,9 @@
 PLATFORMS =
 KERNELS =
+FREEROUTER_SRC =
 
-selectionLists = --arg releasePlatforms '[ $(patsubst %,"%",$(PLATFORMS)) ]' --arg releaseKernels '[ $(patsubst %,"%",$(KERNELS)) ]'
+selectionLists = --arg releasePlatforms '[ $(patsubst %,"%",$(PLATFORMS)) ]' $\
+	         --arg releaseKernels '[ $(patsubst %,"%",$(KERNELS)) ]'
 
 gitDescribe=$(shell git describe --always)
 ifneq ($(shell git status --porcelain),)
@@ -9,6 +11,13 @@ ifneq ($(shell git status --porcelain),)
   $(info Repo is modified, using extended tag as release identifier: $(gitTag))
 else
   gitTag = $(gitDescribe)
+endif
+
+ifneq ($(FREEROUTER_SRC),)
+  freerouterCommit = $(shell git -C $(FREEROUTER_SRC) log -n 1 --pretty=format:"%H" | cut -c1-6)
+  gitTag := $(gitTag)-freertr-$(freerouterCommit)
+  $(info Building with freerouter version $(freerouterCommit))
+  selectionLists += --arg freerouterSrc '{ version = "experimental"; src = $(FREEROUTER_SRC); }'
 endif
 
 onieInstaller:
