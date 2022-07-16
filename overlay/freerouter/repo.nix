@@ -6,7 +6,7 @@
   src = fetchFromGitHub {
     owner = "rare-freertr";
     repo = "freeRtr";
-    rev = "dbb294f41e6335f09b2118d87483048c7882b0a0";
-    sha256 = "19apbifiab8d00pmqmjp7vl1ml74hjhfryc9sq6ymh7ll2ccvq5n";
+    rev = "43f47b5482a8a63c55dc2cadbdb8ff2143fc4460";
+    sha256 = "0w3sv7y48smzrqf12r58ik655dzb8pz6s2dw63fghrp2pmwrz94v";
   };
 }
