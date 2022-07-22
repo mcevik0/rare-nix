@@ -28,7 +28,13 @@ let
       freerouter-jar = super.callPackage freerouter/jar.nix {};
       freerouter = super.callPackage ./freerouter {};
       freerouter-native = super.callPackage ./freerouter/native.nix {
-        openssl = self.openssl_1_1;
+        openssl = self.openssl_1_1.overrideAttrs (oldAttrs: rec {
+          version = "1.1.1q";
+          src = super.fetchurl {
+            url = "https://www.openssl.org/source/${oldAttrs.pname}-${version}.tar.gz";
+            sha256 = "1jhhzp4gh6ymidxm1ckjk948l583awp0w3y2nvqdz7022kk9r4yp";
+          };
+        });
       };
 
       net_snmp = super.net_snmp.overrideAttrs (oldAttrs: rec {
