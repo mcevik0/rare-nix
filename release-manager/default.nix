@@ -1,4 +1,4 @@
-{ support, version, nixProfile, p4Profiles, defaultProfile }:
+{ support, version, nixProfile, p4Profiles, defaultProfile, bash }:
 
 assert builtins.hasAttr defaultProfile p4Profiles;
 support.mkReleaseManager {
@@ -8,6 +8,8 @@ support.mkReleaseManager {
   apiUrl = "https://bitbucket.software.geant.org/rest/api/1.0/projects/RARE/repos/RARE-NIX";
   activationCode = ./activation.sh;
   installCmds = ''
+    substituteInPlace $out/bin/release-manager \
+      --subst-var-by BASH ${bash}/bin/bash
     mkdir -p $out/etc/freertr
     substitute ${./rtr-sw.txt} $out/etc/freertr/rtr-sw.txt \
       --subst-var-by NIX_PROFILE ${nixProfile} \

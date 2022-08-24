@@ -85,6 +85,7 @@ let
     release-manager = import ./release-manager {
       inherit support version nixProfile p4Profiles;
       defaultProfile = "PE";
+      bash = pkgs.bash;
     };
     inherit (pkgs) freerouter freerouter-native;
 
