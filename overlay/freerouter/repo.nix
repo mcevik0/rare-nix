@@ -1,7 +1,7 @@
 { fetchFromGitHub }:
 
 {
-  version = "22.8.24";
+  version = "22.8.27";
 
   src = fetchFromGitHub {
     owner = "rare-freertr";
