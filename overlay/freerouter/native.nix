@@ -1,12 +1,13 @@
-{ gcc10Stdenv, clang_10, fetchFromGitHub, libpcap, libmnl, libbpf, libbsd, openssl,
-  dpdk, numactl, makeWrapper, lib, iproute }:
+{ stdenv, clang, fetchFromGitHub, libpcap, libmnl, libbpf,
+  libbsd, openssl, dpdk, numactl, makeWrapper, lib, iproute, llvm }:
 
 let
   repo = import ./repo.nix { inherit fetchFromGitHub; };
-in gcc10Stdenv.mkDerivation (repo // {
+in stdenv.mkDerivation (repo // {
   pname = "freerouter-native";
 
-  buildInputs = [ makeWrapper libpcap libmnl libbpf libbsd openssl dpdk numactl clang_10 ];
+  buildInputs = [ makeWrapper libpcap libmnl libbpf libbsd openssl
+                  dpdk numactl clang llvm ];
 
   NIX_LDFLAGS = "-ldl -lnuma -lrte_telemetry -lrte_mbuf -lrte_kvargs -lrte_eal";
   NIX_CFLAGS_COMPILE = "-Wno-error=format-security";

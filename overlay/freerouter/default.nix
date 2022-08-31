@@ -1,4 +1,4 @@
-{ stdenv, jdk, makeWrapper, callPackage, runCommand, freerouter-jar }:
+{ stdenv, jdk, jre_minimal, makeWrapper, runCommand, freerouter-jar }:
 
 let
   modules = import (runCommand "freerouter-java-modules" {} ''
@@ -8,7 +8,7 @@ let
     done
     echo "[ $deps ]">$out
   '');
-  jre_minimal = callPackage ../jre.nix {
+  jre = jre_minimal.override {
     inherit jdk modules;
   };
 in stdenv.mkDerivation {
@@ -21,7 +21,7 @@ in stdenv.mkDerivation {
   buildPhase = "true";
   installPhase = ''
     mkdir -p $out/bin
-    makeWrapper ${jre_minimal}/bin/java $out/bin/freerouter \
+    makeWrapper ${jre}/bin/java $out/bin/freerouter \
       --add-flags "-Xmx2048m -jar ${freerouter-jar}/rtr.jar"
   '';
 }
