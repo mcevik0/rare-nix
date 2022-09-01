@@ -53,8 +53,8 @@ let
       );
     };
   pkgs = import (fetchTarball {
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/c41fa83.tar.gz;
-    sha256 = "1j1bd39x565jw3d5hksc1zxk745343s1y8dnd3kn0gdyh1vwm49h";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/4ddd52.tar.gz;
+    sha256 = "1i21npwk0w5pz21fyrqf13advbpwjg7nb81mpf6vfvaizx8cfnxn";
   }) {
     overlays = import ./overlay ++ [ freerouterOverlay ];
   };
@@ -170,7 +170,7 @@ let
         passwordlessSudo = false;
       };
     };
-  }).override { memSize = 7*1024; };
+  }).override { memSize = 8*1024; };
   standaloneInstaller = support.mkStandaloneInstaller {
     inherit release version gitTag nixProfile component;
   };
