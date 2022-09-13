@@ -20,7 +20,10 @@ in python.pkgs.buildPythonApplication rec {
     bf-drivers-runtime sal_modules
   ] ++ (with pythonModules; [ yappi ])
   ++ pkgs.lib.optional (platform == "stordis_bf2556x_1t")
-    bf-sde.pkgs.bf-platforms.aps_bf2556;
+    (if (pkgs.lib.versionOlder bf-sde.version "9.7.0") then
+      bf-sde.pkgs.bf-platforms.aps_bf2556
+     else
+       bf-sde.pkgs.bf-platforms.aps_bf2556.salRefApp);
 
   preConfigure = ''
     cd bfrt_python
