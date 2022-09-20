@@ -53,8 +53,8 @@ let
       );
     };
   pkgs = import (fetchTarball {
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/641b0c6.tar.gz;
-    sha256 = "08fghyaaj1xafcm36m6lrscbzijrqkjxbxhzxyysa622z3h78ysq";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/e576e4.tar.gz;
+    sha256 = "17a3jdp8ffqglwrbxdmh6p2vsbmlvg1nxyc6lkbnz5gx0af7vlrr";
   }) {
     overlays = import ./overlay ++ [ freerouterOverlay ];
   };
