@@ -1,7 +1,7 @@
 { fetchgit }:
 
 {
-  version = "2022.10.13";
+  version = "2022.10.16";
   src = fetchgit {
     url = "https://bitbucket.software.geant.org/scm/rare/rare.git";
     rev = "09e14ee49d419753b966bdab4d55346ee6b11daf";
