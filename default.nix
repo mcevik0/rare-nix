@@ -76,8 +76,7 @@ let
   support = bf-sde.support;
 
   p4Profiles = import rare/p4-profiles.nix {
-    inherit (pkgs) lib;
-    inherit bf-sde;
+    inherit pkgs bf-sde;
   };
 
   sliceCommon = {
@@ -179,8 +178,13 @@ in {
   ## For the "install" make target
   inherit (sliceCommon) release-manager;
 
-  ## Make the per-profile compiler options accessible
-  inherit p4Profiles;
+  ## Helper function for the profile optimizier to discover all sets
+  ## of distinct P4 compiler flags for a specific profile and P4
+  ## target. See comment there for specific usage.
+  flagsForProfile = profile: target:
+    import ./rare/compiler-flags.nix {
+      inherit profile target p4Profiles supportedPlatforms pkgs bf-sde;
+    };
 
   ## Final installation on the target system with
   ##   nix-env -f . -p <some-profile-name> -r -i -A install --argstr kernelRelease $(uname -r) --argstr platform <platform>
