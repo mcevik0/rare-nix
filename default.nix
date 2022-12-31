@@ -53,8 +53,8 @@ let
       );
     };
   pkgs = import (fetchTarball {
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/178568.tar.gz;
-    sha256 = "0q8qxx6i4ld5p7nmdpc8wr7w102knxc4aqfas7a6d2rkk8cnc405";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/59c8f6.tar.gz;
+    sha256 = "0vkn1pzgh2szyk42lz9dx806vz36wfg95wgqsjzq3n51iyy5bv39";
   }) {
     overlays = import ./overlay ++ [ freerouterOverlay ];
   };
@@ -185,6 +185,10 @@ in {
     import ./rare/compiler-flags.nix {
       inherit profile target p4Profiles supportedPlatforms pkgs bf-sde;
     };
+  ## Make the SDE used to build RARE available. This is used by the
+  ## optimizer in the rare Git repo to compile the profiles with the
+  ## exact same environment.
+  inherit bf-sde;
 
   ## Final installation on the target system with
   ##   nix-env -f . -p <some-profile-name> -r -i -A install --argstr kernelRelease $(uname -r) --argstr platform <platform>
