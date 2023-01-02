@@ -72,7 +72,7 @@ let
   version = "2";
   nixProfile = "/nix/var/nix/profiles/RARE";
 
-  bf-sde = pkgs.bf-sde.v9_7_2;
+  bf-sde = pkgs.bf-sde.v9_7_4;
   support = bf-sde.support;
 
   p4Profiles = import rare/p4-profiles.nix {
