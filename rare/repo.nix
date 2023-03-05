@@ -1,10 +1,10 @@
 { fetchgit }:
 
 {
-  version = "2023.02.18";
+  version = "2023.03.05";
   src = fetchgit {
     url = "https://bitbucket.software.geant.org/scm/rare/rare.git";
-    rev = "98b07bfcf736d599dd166de0ddc3dbee85c5563e";
-    sha256 = "0xd10zvpgb7aqa03ap0y5iz455i9fhg4s79rv0ahdksjdafx4frd";
+    rev = "a88c7397109a4f8d7d2ffc99e76b9e551f394f61";
+    sha256 = "04j6pagfdbm5fvayk3msjvfg5l6wjfpsm9r17i6xkvnrmh54pdgz";
   };
 }
