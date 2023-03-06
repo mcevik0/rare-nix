@@ -93,3 +93,4 @@ dcfg alias test tna-linux-temp description display main cpu temperature
 dcfg alias test tna-asic-temp command attach shell1 @SCRIPTS@/bin/sh_tna_temp.sh
 dcfg alias test tna-asic-temp cmd2nd flash type /etc/freertr/tna_temp.cfg
 dcfg alias test tna-asic-temp description display forwarding asic cpu temperature
+dcfg alias test tna-univercd command flash browser http://docs.freertr.org/
