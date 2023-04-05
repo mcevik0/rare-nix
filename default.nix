@@ -53,8 +53,8 @@ let
       );
     };
   pkgs = import (fetchTarball {
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/59c8f6.tar.gz;
-    sha256 = "0vkn1pzgh2szyk42lz9dx806vz36wfg95wgqsjzq3n51iyy5bv39";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/da1126.tar.gz;
+    sha256 = "1f8mp3yns69v29m40pwbk7073rda7ngiprk2rsbxs25mggbx5dlv";
   }) {
     overlays = import ./overlay ++ [ freerouterOverlay ];
   };
@@ -157,7 +157,7 @@ let
     inherit version nixProfile component binaryCaches;
     platforms = builtins.filter (platform: builtins.match "^model.*" platform == null) platforms;
     ## The kernel used here must match that from the profile
-    partialSlice = slice bf-sde.pkgs.kernel-modules.Debian11_0;
+    partialSlice = slice bf-sde.pkgs.kernel-modules.Debian11_6;
     bootstrapProfile = ./onie/profile;
     fileTree = ./onie/files;
     NOS = "${component}-OS";
