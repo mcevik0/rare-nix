@@ -45,6 +45,9 @@ in {
           fi
           exit 0
         '';
+        ## bf_switchd sometimes hangs after a SIGTERM. Decrease the
+        ## default timeout for the final SIGKILL.
+        TimeoutStopSec = "5";
         Restart = "always";
         Type = "simple";
       };
