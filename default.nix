@@ -53,8 +53,8 @@ let
       );
     };
   pkgs = import (fetchTarball {
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/da1126.tar.gz;
-    sha256 = "1f8mp3yns69v29m40pwbk7073rda7ngiprk2rsbxs25mggbx5dlv";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/70dbe7.tar.gz;
+    sha256 = "0rq5swpv65n4j67w1r3ibfkzzi08nx534jr6cyvq22cz2z29g5vm";
   }) {
     overlays = import ./overlay ++ [ freerouterOverlay ];
   };
@@ -72,7 +72,7 @@ let
   version = "2";
   nixProfile = "/nix/var/nix/profiles/RARE";
 
-  bf-sde = pkgs.bf-sde.v9_7_4;
+  bf-sde = pkgs.bf-sde.v9_11_2;
   support = bf-sde.support;
 
   p4Profiles = import rare/p4-profiles.nix {
