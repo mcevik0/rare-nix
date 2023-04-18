@@ -19,7 +19,8 @@ in python.pkgs.buildPythonApplication rec {
   propagatedBuildInputs = [
     bf-drivers-runtime sal_modules
   ] ++ (with pythonModules; [ yappi ])
-  ++ pkgs.lib.optional (platform == "stordis_bf2556x_1t")
+  ++ pkgs.lib.optional (platform == "stordis_bf2556x_1t" &&
+                        bf-sde.baseboardForPlatform platform != null)
     (if (pkgs.lib.versionOlder bf-sde.version "9.7.0") then
       bf-sde.pkgs.bf-platforms.aps_bf2556
      else

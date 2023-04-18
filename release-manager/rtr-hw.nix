@@ -1,7 +1,8 @@
 { lib, bf-sde, platform, scripts, freerouter-native, release-manager, runCommand }:
 
 let
-  forwarderExtraArgs = lib.optionalString (platform == "stordis_bf2556x_1t")
+  forwarderExtraArgs = lib.optionalString (platform == "stordis_bf2556x_1t"
+                                           && bf-sde.baseboardForPlatform platform != null)
     "--sal-grpc-server-address=127.0.0.1:${bf-sde.pkgs.bf-platforms.aps_bf2556.salRefApp.salGrpcPort}";
 in runCommand "rtr-hw.txt" {} (''
   mkdir -p $out/etc/freertr
