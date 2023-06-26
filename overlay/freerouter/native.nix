@@ -10,7 +10,7 @@ in stdenv.mkDerivation (repo // {
                   dpdk numactl clang llvm ];
 
   NIX_LDFLAGS = "-ldl -lnuma -lrte_telemetry -lrte_mbuf -lrte_kvargs -lrte_eal";
-  NIX_CFLAGS_COMPILE = "-Wno-error=format-security";
+  NIX_CFLAGS_COMPILE = "-Wno-error=format-security -fno-stack-protector";
 
   buildPhase = ''
     set -e

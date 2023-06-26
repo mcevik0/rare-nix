@@ -1,7 +1,7 @@
 let
   overlay = self: super:
     {
-      jdk = self.jdk17_headless;
+      jdk = self.jdk19_headless;
       freerouter-jar = super.callPackage freerouter/jar.nix {};
       freerouter = super.callPackage ./freerouter {};
       freerouter-native = super.callPackage ./freerouter/native.nix {
@@ -16,6 +16,8 @@ let
           [ "--with-perl-modules"
             "--with-persistent-directory=/var/lib/snmp"
           ];
+
+        buildInputs = oldAttrs.buildInputs ++ [ self.libxcrypt ];
 
         ## Install Perl modules to $out rather than the Perl package
         preConfigure = ''
