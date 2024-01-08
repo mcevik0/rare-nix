@@ -25,6 +25,10 @@ let
       fi
   '';
 in {
+  ## Get rid of the warning about missing stateVersion during
+  ## evaluation of the NixOS configuration. This can be kept in sync
+  ## with the nixpkgs version.
+  system.stateVersion = "23.11";
   systemd.services = {
     freerouter = {
       description = "freeRtr Daemon";

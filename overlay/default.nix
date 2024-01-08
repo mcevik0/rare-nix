@@ -1,7 +1,7 @@
 let
   overlay = self: super:
     {
-      jdk = self.jdk19_headless;
+      jdk = self.jdk21_headless;
       freerouter-jar = super.callPackage freerouter/jar.nix {};
       freerouter = super.callPackage ./freerouter {};
       freerouter-native = super.callPackage ./freerouter/native.nix {
