@@ -157,7 +157,7 @@ let
     inherit version nixProfile component binaryCaches;
     platforms = builtins.filter (platform: builtins.match "^model.*" platform == null) platforms;
     ## The kernel used here must match that from the profile
-    partialSlice = slice bf-sde.pkgs.kernel-modules.Debian11_6;
+    partialSlice = slice bf-sde.pkgs.kernel-modules.Debian12_4;
     bootstrapProfile = ./onie/profile;
     fileTree = ./onie/files;
     NOS = "${component}-OS";
