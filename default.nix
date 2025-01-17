@@ -43,6 +43,13 @@
 ## should contain the attributes "version" and "src" to override
 ## overlay/freerouter/repo.nix.
 , freerouterSrc ? {}
+
+## Whether to activate RARE in the ONIE installer
+, activate ? true
+
+## Whether to include the full SDE development environment in the ONIE
+## installer
+, withSdeEnv ? false
 }:
 
 let
@@ -53,8 +60,8 @@ let
       );
     };
   pkgs = import (fetchTarball {
-    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/3dc44c.tar.gz;
-    sha256 = "1ivrdsvhxgf6k2hqh4v87g70nb1bgqpcc4dqa1d14xwl4jj9w94p";
+    url = https://github.com/alexandergall/bf-sde-nixpkgs/archive/ecd155.tar.gz;
+    sha256 = "0f4fp2cjk3g5yhc4a9sggsypazp5pp1a105s1w60vm5zdy3iri0j";
   }) {
     overlays = import ./overlay ++ [ freerouterOverlay ];
   };
@@ -154,10 +161,7 @@ let
   component = "RARE";
   releaseClosure = support.mkReleaseClosure release component;
   onieInstaller = (support.mkOnieInstaller {
-    inherit version nixProfile component binaryCaches;
-    platforms = builtins.filter (platform: builtins.match "^model.*" platform == null) platforms;
-    ## The kernel used here must match that from the profile
-    partialSlice = slice bf-sde.pkgs.kernel-modules.Debian12_4;
+    inherit version nixProfile component binaryCaches platforms slice activate withSdeEnv;
     bootstrapProfile = ./onie/profile;
     fileTree = ./onie/files;
     NOS = "${component}-OS";
@@ -169,7 +173,7 @@ let
         passwordlessSudo = false;
       };
     };
-  }).override { memSize = 8*1024; };
+  }).override { memSize = 10*1024; };
   standaloneInstaller = support.mkStandaloneInstaller {
     inherit release version gitTag nixProfile component;
   };

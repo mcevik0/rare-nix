@@ -1,6 +1,7 @@
 PLATFORMS =
 KERNELS =
 FREEROUTER_SRC =
+ARGS =
 
 selectionLists = --arg releasePlatforms '[ $(patsubst %,"%",$(PLATFORMS)) ]' $\
 	         --arg releaseKernels '[ $(patsubst %,"%",$(KERNELS)) ]'
@@ -22,7 +23,7 @@ endif
 
 onieInstaller:
 	NIX_PATH= nix-build -j auto -A onieInstaller $(selectionLists) \
-	  --argstr gitTag $(gitTag) \
+	  --argstr gitTag $(gitTag) $(ARGS) \
 	  --arg binaryCaches '[{url = "http://p4.cache.nix.net.switch.ch"; key = "p4.cache.nix.net.switch.ch:cR3VMGz/gdZIdBIaUuh42clnVi5OS1McaiJwFTn5X5g=";}]'
 
 standaloneInstaller:
