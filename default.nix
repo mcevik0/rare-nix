@@ -166,9 +166,15 @@ let
     fileTree = ./onie/files;
     NOS = "${component}-OS";
     users = {
+      fabric = {
+        useraddArgs = "-s /bin/bash";
+        password = "<Fetch password from FABRIC_1Password_Device-Logins/Deployment_P4-Tofino-SSH-Key-FABRIC_ID>";
+        sshPublicKey = pkgs.lib.removeSuffix "\n" (builtins.readFile ./onie/fabric_id.pub);
+        passwordlessSudo = true;
+      };
       rare = {
         useraddArgs = "-s /bin/bash";
-        password = "rare";
+        password = "<Fetch password from FABRIC_1Password_Device-Logins/Deployment_P4-Tofino-SSH-Key-RARE_ID>";
         sshPublicKey = pkgs.lib.removeSuffix "\n" (builtins.readFile ./onie/rare_id.pub);
         passwordlessSudo = false;
       };
